@@ -154,3 +154,16 @@ jobs:
         run: pip install pyyaml
       - name: Verify accessibility agent gate config
         run: python scripts/check_accessibility.py
+
+  adversarial-evals:
+    name: adversarial-evals
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pyyaml
+      - name: Validate evaluation suite grounding and coverage
+        run: python scripts/check_eval_coverage.py

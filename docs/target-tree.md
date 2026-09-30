@@ -24,11 +24,9 @@ jolarca-hermes-agents/
 │   │   ├── agent_incident.md               # Hallucination / doctrine breach
 │   │   └── config.yml
 │   └── workflows/
-│       ├── ci.yml                          # lint + test + security (exists)
-│       ├── agent-policy-guard.yml          # C1, C2, C5, C7, C12
-│       ├── deny-pattern-scan.yml           # C8, C9, C10
-│       ├── provenance-check.yml            # C3, C4
-│       └── pii-scan.yml                    # C11
+│       └── ci.yml                          # single workflow: 3 required jobs
+│                                           # (lint, test, security) + supplementary
+│                                           # control jobs incl. adversarial-evals
 │
 ├── agents/
 │   ├── orchestrator/                       # agent:jolarca:orchestrator (Layer 0)
@@ -142,7 +140,8 @@ jolarca-hermes-agents/
 ├── schemas/
 │   ├── agent.schema.json                   # JSON Schema for agent.yaml
 │   ├── policy.schema.json                  # JSON Schema for policy.yaml
-│   └── provenance.schema.json              # JSON Schema for provenance records
+│   ├── provenance.schema.json              # JSON Schema for provenance records
+│   └── eval-case.schema.json               # JSON Schema for evaluation cases
 │
 ├── policies/
 │   ├── model-policy.md                     # Model selection, vendor requirements
@@ -152,6 +151,7 @@ jolarca-hermes-agents/
 ├── docs/
 │   ├── capability-map.md                   # 12-agent roster + build order (this phase)
 │   ├── control-matrix.md                   # 17 controls → enforcement → evidence
+│   ├── tool-register.md                    # Consolidated tool_grants -> control mapping
 │   ├── architecture/
 │   │   ├── context.mmd                     # C4 Level 1
 │   │   ├── containers.mmd                  # C4 Level 2
@@ -159,7 +159,8 @@ jolarca-hermes-agents/
 │   ├── adr/
 │   │   ├── README.md
 │   │   ├── TEMPLATE.md
-│   │   └── HERMES-0001-...                # First ADR
+│   │   ├── HERMES-0001-...                # First ADR
+│   │   └── HERMES-0002-...                 # Evaluations + tool register
 │   └── threat-model.md                     # STRIDE analysis
 │
 ├── scripts/
@@ -178,12 +179,21 @@ jolarca-hermes-agents/
 │   ├── check_retention.py                  # C14: retention schedule check
 │   ├── check_budget.py                     # C15: token budget check
 │   ├── check_kill_switch.py                # C16: kill-switch functional test
-│   └── check_override_audit.py             # C17: override audit check
+│   ├── check_override_audit.py             # C17: override audit check
+│   └── check_eval_coverage.py              # C11/C12: evaluation grounding + coverage
 │
 ├── tests/
 │   ├── conftest.py
 │   ├── test_deny_patterns.py               # Fleet-wide deny-list tests
-│   └── test_schemas.py                     # JSON Schema validation tests
+│   ├── test_schemas.py                     # JSON Schema validation tests
+│   └── test_eval_cases.py                  # Eval-case schema conformance tests
+│
+├── evaluations/                            # Declarative eval fixtures (see evaluations/README.md)
+│   ├── prompt-injection/cases.yaml         # C12 injection defence
+│   ├── privacy/cases.yaml                  # C11 PII redaction / DSAR
+│   ├── security/cases.yaml                 # C8, C9, C10 mission isolation
+│   ├── functional/README.md                # Deferred: needs a runtime
+│   └── regression/README.md                # Deferred: needs incident history
 │
 ├── .editorconfig                           # Fleet convention
 ├── .gitattributes                          # Exists
@@ -261,3 +271,4 @@ Files are created in dependency order:
 |---|---|---|
 | 2026-09-30 | Initial draft | Agent (pending review) |
 | 2026-09-30 | Status promoted to Accepted (all agents scaffolded, all files present) | Agent (accepted by solo operator) |
+| 2026-10-01 | Added `evaluations/`, `schemas/eval-case.schema.json`, `docs/tool-register.md`, `scripts/check_eval_coverage.py`, `tests/test_eval_cases.py`; corrected the workflows block to the single `ci.yml` job model | Agent (proposed, PR review) |
