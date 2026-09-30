@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jolarca.dev/schemas/agent.schema.json",
+  "title": "Agent Definition",
+  "description": "Schema for agent.yaml — identity, model policy, and tool grants for a Hermes agent.",
+  "type": "object",
+  "required": ["identity_tag", "name", "description", "model_policy"],
+  "properties": {
+    "identity_tag": {
+      "type": "string",
+      "pattern": "^agent:jolarca:[a-z][a-z0-9-]*$",
+      "description": "Unique identity tag following agent:jolarca:<module-id> pattern."
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable agent name."
+    },
+    "description": {
+      "type": "string",
+      "description": "One-line purpose statement."
+    },
+    "layer": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Build-order layer from capability-map.md."
+    },
+    "depends_on": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Module ids this agent depends on."
+    },
+    "data_classification": {
+      "type": "string",
+      "enum": ["public", "internal", "confidential", "restricted"],
+      "description": "Data classification per fleet policy."
+    },
+    "model_policy": {
+      "type": "object",
+      "required": ["provider", "model"],
+      "properties": {
+        "provider": {"type": "string"},
+        "model": {"type": "string"},
+        "temperature": {"type": "number", "minimum": 0, "maximum": 2},
+        "max_tokens": {"type": "integer", "minimum": 1}
+      }
+    },
+    "tool_grants": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Allow-list of tools this agent may invoke."
+    },
+    "human_gate": {
+      "type": "string",
+      "enum": ["none", "editorial", "blocks_all", "blocks_release"],
+      "description": "Human approval gate type."
+    }
+  },
+  "additionalProperties": false
+}

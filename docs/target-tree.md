@@ -164,7 +164,7 @@ jolarca-hermes-agents/
 │
 ├── scripts/
 │   ├── validate_agents.py                  # Schema validation for agent.yaml + policy.yaml
-│   ├── check_deny_patterns.py              # C8, C9, C10: scan for jol-, mission refs
+│   ├── check_deny_patterns.py              # C8, C9, C10: scan for mission-prefixed refs
 │   ├── check_provenance.py                 # C4: validate source citations
 │   ├── check_approved_sources.py           # C1: validate source allow-list
 │   ├── check_tenant_isolation.py           # C2: validate tenant-scoped access

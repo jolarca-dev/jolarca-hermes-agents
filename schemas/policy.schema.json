@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jolarca.dev/schemas/policy.schema.json",
+  "title": "Agent Policy",
+  "description": "Schema for policy.yaml — allow/deny rules and compliance controls for a Hermes agent.",
+  "type": "object",
+  "required": ["allow", "deny"],
+  "properties": {
+    "allow": {
+      "type": "object",
+      "description": "Explicitly permitted actions and resources.",
+      "additionalProperties": {
+        "type": "array",
+        "items": {"type": "string"}
+      }
+    },
+    "deny": {
+      "type": "object",
+      "description": "Explicitly forbidden actions and resources.",
+      "additionalProperties": {
+        "type": "array",
+        "items": {"type": "string"}
+      }
+    },
+    "escalation": {
+      "type": "object",
+      "description": "Conditions that trigger human escalation.",
+      "properties": {
+        "patterns": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Regex patterns that trigger escalation."
+        },
+        "action": {
+          "type": "string",
+          "enum": ["block", "escalate", "log_and_continue"],
+          "description": "What to do when an escalation pattern matches."
+        }
+      }
+    },
+    "retention": {
+      "type": "object",
+      "properties": {
+        "max_days": {"type": "integer", "minimum": 1},
+        "log_level": {"type": "string", "enum": ["debug", "info", "warning", "error"]}
+      }
+    },
+    "budget": {
+      "type": "object",
+      "properties": {
+        "max_tokens_per_request": {"type": "integer", "minimum": 1},
+        "max_tokens_per_day": {"type": "integer", "minimum": 1},
+        "max_cost_per_day_usd": {"type": "number", "minimum": 0}
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,3 @@
+# No known false positives yet. Add entries as gitleaks flags test vectors
+# or documented examples that are not real secrets.
+# Format: <sha>:<file>:<rule>:<line>

@@ -1,0 +1,13 @@
+# Qodana static analysis — compliance-tuned for jolarca-hermes-agents.
+# Community linter: runs fully local (no Qodana Cloud token).
+# Local run: qodana scan --image jetbrains/qodana-python-community:2026.1
+version: "1.0"
+linter: jetbrains/qodana-python-community:2026.1
+profile:
+  name: qodana.recommended
+exclude:
+  - name: All
+    paths:
+      - .venv
+      - node_modules
+failThreshold: 0

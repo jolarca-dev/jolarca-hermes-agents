@@ -1,0 +1,32 @@
+allow:
+  actions:
+    - inspect_input
+    - inspect_output
+    - block_request
+    - escalate_to_human
+    - log_violation
+
+deny:
+  actions:
+    - generate_content
+    - modify_content
+    - direct_database_write
+    - cross_program_memory_access
+    - mission_platform_access
+  resources:
+    - "jol-*"
+    - "journeyoflife-org/*"
+    - "/opt/jol/*"
+
+escalation:
+  patterns:
+    - "doctrinal_question"
+    - "pastoral_advice"
+    - "religious_interpretation"
+    - "prompt_injection"
+    - "jailbreak_attempt"
+  action: block
+
+retention:
+  max_days: 365
+  log_level: warning

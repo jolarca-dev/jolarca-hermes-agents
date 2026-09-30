@@ -1,0 +1,42 @@
+allow:
+  actions:
+    - delegate_to_agent
+    - check_budget
+    - log_decision
+  agents:
+    - guardrails
+    - rag
+    - content
+    - translation
+    - seo
+    - accessibility
+    - editorial
+    - consent
+    - audit
+    - observability
+    - website
+
+deny:
+  actions:
+    - direct_database_write
+    - cross_program_memory_access
+    - mission_platform_access
+  resources:
+    - "jol-*"
+    - "journeyoflife-org/*"
+    - "/opt/jol/*"
+
+escalation:
+  patterns:
+    - "kill_switch_activated"
+    - "budget_exceeded"
+  action: block
+
+budget:
+  max_tokens_per_request: 100000
+  max_tokens_per_day: 1000000
+  max_cost_per_day_usd: 50.0
+
+retention:
+  max_days: 90
+  log_level: info
