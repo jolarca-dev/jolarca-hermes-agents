@@ -1,0 +1,28 @@
+---
+title: "C4 Level 1 — System Context: Hermes Agent Fleet"
+---
+graph TB
+    subgraph External["External Actors"]
+        User["Marketplace Operator<br/>(Gintaras Kazlauskas)<br/>— sole human actor in solo era"]
+        MissionPlatform["Mission Platform<br/>(external, institutionally separate)<br/>— ADR-0004 mandates separation"]
+        LLMProvider["LLM Provider<br/>(not yet selected)<br/>— requires DPIA per model-policy.md"]
+    end
+
+    subgraph JolarcaFleet["jolarca-dev Marketplace Fleet"]
+        HermesAgents["Hermes Agent Fleet<br/>(jolarca-hermes-agents)<br/>12 agents, 7 layers<br/>SOC 2 / ISO 27001 / GDPR"]
+        ControlPlane["Control Plane<br/>(jolarca-control)<br/>Terraform, fleet allow-list,<br/>branch protection rules"]
+        DocsRepo["Documentation<br/>(jolarca-docs)<br/>ADR namespace registry,<br/>fleet conventions"]
+        SecurityRepo["Security Policies<br/>(jolarca-security)<br/>Security procedures,<br/>incident response"]
+        VendorRepo["Vendor Registry<br/>(jolarca-vendor)<br/>DPIA records,<br/>provider assessments"]
+    end
+
+    User -->|"requests content /<br/>DSAR / editorial approval"| HermesAgents
+    HermesAgents -->|"approved content<br/>(editorial + accessibility gated)"| User
+    HermesAgents -->|"retrieves docs<br/>(approved sources only, C1)"| DocsRepo
+    HermesAgents -->|"validates against<br/>security policies"| SecurityRepo
+    HermesAgents -->|"delegates to<br/>(no direct DB access, C8)"| MissionPlatform
+    HermesAgents -.->|"no shared memory<br/>(C9) / no writes<br/>(C8)"| MissionPlatform
+    HermesAgents -->|"model calls<br/>(when provider approved, C13)"| LLMProvider
+    ControlPlane -->|"governs<br/>(branch protection,<br/>fleet allow-list)"| HermesAgents
+    DocsRepo -->|"ADR prefix<br/>(HERMES-)"| HermesAgents
+    VendorRepo -->|"DPIA required<br/>before data sent"| LLMProvider

@@ -1,0 +1,70 @@
+---
+title: "C4 Level 2 — Container View: Hermes Agent Fleet Internals"
+---
+graph TB
+    subgraph Repo["jolarca-hermes-agents Repository"]
+        subgraph AgentFleet["Agent Fleet (agents/)"]
+            subgraph FoundationLayer["Layer 0 — Foundation"]
+                Orchestrator["orchestrator<br/>agent:jolarca:orchestrator<br/>Routing, budget, kill-switch<br/>Classification: internal"]
+                Audit["audit<br/>agent:jolarca:audit<br/>Immutable logging,<br/>evidence hashing<br/>Classification: confidential"]
+                Observability["observability<br/>agent:jolarca:observability<br/>Telemetry, drift,<br/>incidents<br/>Classification: internal"]
+            end
+
+            subgraph SafetyLayer["Layer 1 — Safety Boundary"]
+                Guardrails["guardrails<br/>agent:jolarca:guardrails<br/>Injection defence,<br/>doctrine escalation<br/>Gate: blocks_all"]
+            end
+
+            subgraph DataLayer["Layer 2 — Data Access + Compliance"]
+                Consent["consent<br/>agent:jolarca:consent<br/>PII redaction, DSAR<br/>Gate: blocks_all<br/>Classification: restricted"]
+                RAG["rag<br/>agent:jolarca:rag<br/>Approved-source retrieval,<br/>tenant-scoped index<br/>Classification: confidential"]
+            end
+
+            subgraph GenerationLayer["Layer 3 — Generation"]
+                Content["content<br/>agent:jolarca:content<br/>Draft generation from<br/>retrieved sources<br/>Gate: editorial"]
+            end
+
+            subgraph SpecializationLayer["Layer 4 — Specialization"]
+                Translation["translation<br/>agent:jolarca:translation<br/>Locale rendering,<br/>terminology<br/>Gate: editorial"]
+                SEO["seo<br/>agent:jolarca:seo<br/>Metadata, structured data<br/>Gate: editorial"]
+                Accessibility["accessibility<br/>agent:jolarca:accessibility<br/>WCAG 2.1 AA validation<br/>Gate: blocks_release"]
+            end
+
+            subgraph ApprovalLayer["Layer 5 — Approval"]
+                Editorial["editorial<br/>agent:jolarca:editorial<br/>Approval workflow,<br/>provenance check<br/>Gate: human_approver"]
+            end
+
+            subgraph CompositionLayer["Layer 6 — Composition"]
+                Website["website<br/>agent:jolarca:website<br/>Site composition from<br/>gated artefacts<br/>Gate: editorial"]
+            end
+        end
+
+        subgraph GovernanceLayer["Governance Infrastructure"]
+            Schemas["Schemas (schemas/)<br/>agent.schema.json<br/>policy.schema.json<br/>provenance.schema.json"]
+            Policies["Policies (policies/)<br/>approved_sources.md<br/>retention.md<br/>terminology.md<br/>model-policy.md<br/>data-processing-policy.md"]
+            Scripts["Scripts (scripts/)<br/>validate_agents.py<br/>check_deny_patterns.py"]
+            CI["CI Pipeline (.github/workflows/ci.yml)<br/>11 jobs: lint, test, security<br/>+ 8 supplementary control jobs"]
+            Tests["Tests (tests/)<br/>test_validate_agents.py<br/>test_deny_patterns.py"]
+        end
+    end
+
+    Orchestrator -->|"delegates to"| Guardrails
+    Guardrails -->|"pre-empts"| Consent
+    Guardrails -->|"pre-empts"| RAG
+    RAG -->|"retrieves for"| Content
+    Content -->|"drafts to"| Translation
+    Content -->|"drafts to"| SEO
+    Content -->|"drafts to"| Accessibility
+    Translation -->|"submits for approval"| Editorial
+    SEO -->|"submits for approval"| Editorial
+    Editorial -->|"approved artefacts to"| Website
+    Accessibility -->|"WCAG gate to"| Website
+
+    Audit -.->|"cross-cutting:<br/>logs all agents"| AgentFleet
+    Observability -.->|"cross-cutting:<br/>monitors all agents"| AgentFleet
+
+    CI -->|"validates"| Schemas
+    CI -->|"scans"| Policies
+    CI -->|"runs"| Scripts
+    CI -->|"executes"| Tests
+    Schemas -->|"constrains"| AgentFleet
+    Policies -->|"governs"| AgentFleet
