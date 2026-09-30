@@ -1,0 +1,27 @@
+allow:
+  actions:
+    - compose_page
+    - check_editorial_approval
+    - check_accessibility_gate
+    - log_composition
+
+deny:
+  actions:
+    - publish_without_approval
+    - use_unapproved_content
+    - bypass_accessibility_gate
+    - mission_platform_access
+  resources:
+    - "jol-*"
+    - "journeyoflife-org/*"
+    - "/opt/jol/*"
+
+escalation:
+  patterns:
+    - "unapproved_content_requested"
+    - "accessibility_gate_failed"
+  action: block
+
+retention:
+  max_days: 90
+  log_level: info

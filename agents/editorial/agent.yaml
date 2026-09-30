@@ -1,0 +1,17 @@
+identity_tag: "agent:jolarca:editorial"
+name: "Editorial"
+description: "Approval workflow, provenance completeness check."
+layer: 5
+depends_on:
+  - content
+  - translation
+data_classification: confidential
+model_policy:
+  provider: null  # editorial reviews, does not generate
+  model: null
+tool_grants:
+  - approve_content
+  - reject_content
+  - check_provenance_completeness
+  - log_approval
+human_gate: human_approver

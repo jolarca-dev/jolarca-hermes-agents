@@ -1,0 +1,29 @@
+allow:
+  actions:
+    - approve_content
+    - reject_content
+    - check_provenance_completeness
+    - log_approval
+    - request_revision
+
+deny:
+  actions:
+    - generate_content
+    - modify_content
+    - approve_without_provenance
+    - mission_platform_access
+  resources:
+    - "jol-*"
+    - "journeyoflife-org/*"
+    - "/opt/jol/*"
+
+escalation:
+  patterns:
+    - "provenance_incomplete"
+    - "doctrinal_content_detected"
+    - "sensitive_content_flagged"
+  action: block
+
+retention:
+  max_days: 2555  # 7 years for approval records
+  log_level: info
