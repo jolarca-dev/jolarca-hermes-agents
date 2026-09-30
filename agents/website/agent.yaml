@@ -1,0 +1,16 @@
+identity_tag: "agent:jolarca:website"
+name: "Website"
+description: "Site composition from approved, gated artefacts."
+layer: 6
+depends_on:
+  - editorial
+  - accessibility
+data_classification: public
+model_policy:
+  provider: null  # website composes, does not generate
+  model: null
+tool_grants:
+  - compose_page
+  - check_editorial_approval
+  - check_accessibility_gate
+human_gate: editorial

@@ -20,4 +20,4 @@ def test_validate_agents_passes():
         f"validate_agents.py failed:\n{result.stdout}\n{result.stderr}"
     )
     assert "PASSED" in result.stdout
-    assert "10 agent(s)" in result.stdout
+    assert "12 agent(s)" in result.stdout
