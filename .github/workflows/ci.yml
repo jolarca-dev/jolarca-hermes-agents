@@ -88,15 +88,7 @@ jobs:
       - name: Install dependencies
         run: pip install pyyaml
       - name: Verify consent agent PII policy
-        run: |
-          python -c "
-          import yaml
-          with open('agents/consent/policy.yaml') as f:
-              p = yaml.safe_load(f)
-          assert 'store_pii_in_logs' in p['deny']['actions']
-          assert 'cross_tenant_pii_access' in p['deny']['actions']
-          print('pii-scan: PASSED')
-          "
+        run: python scripts/check_pii_redaction.py
 
   retention-check:
     name: retention-check
@@ -109,23 +101,7 @@ jobs:
       - name: Install dependencies
         run: pip install pyyaml
       - name: Verify retention policies
-        run: |
-          python -c "
-          import yaml
-          # Audit: 7-year retention
-          with open('agents/audit/policy.yaml') as f:
-              p = yaml.safe_load(f)
-          assert p['retention']['max_days'] == 2555
-          # Editorial: 7-year retention
-          with open('agents/editorial/policy.yaml') as f:
-              p = yaml.safe_load(f)
-          assert p['retention']['max_days'] == 2555
-          # Consent: 30-day retention (GDPR)
-          with open('agents/consent/policy.yaml') as f:
-              p = yaml.safe_load(f)
-          assert p['retention']['max_days'] == 30
-          print('retention-check: PASSED')
-          "
+        run: python scripts/check_retention.py
 
   budget-check:
     name: budget-check
@@ -138,17 +114,7 @@ jobs:
       - name: Install dependencies
         run: pip install pyyaml
       - name: Verify orchestrator budget caps
-        run: |
-          python -c "
-          import yaml
-          with open('agents/orchestrator/policy.yaml') as f:
-              p = yaml.safe_load(f)
-          assert 'budget' in p
-          assert p['budget']['max_tokens_per_request'] > 0
-          assert p['budget']['max_tokens_per_day'] > 0
-          assert p['budget']['max_cost_per_day_usd'] > 0
-          print('budget-check: PASSED')
-          "
+        run: python scripts/check_budget.py
 
   kill-switch-test:
     name: kill-switch-test
@@ -161,14 +127,7 @@ jobs:
       - name: Install dependencies
         run: pip install pyyaml
       - name: Verify kill-switch tool grant
-        run: |
-          python -c "
-          import yaml
-          with open('agents/orchestrator/agent.yaml') as f:
-              a = yaml.safe_load(f)
-          assert 'kill_switch' in a['tool_grants']
-          print('kill-switch-test: PASSED')
-          "
+        run: python scripts/check_kill_switch.py
 
   audit-check:
     name: audit-check
@@ -181,15 +140,7 @@ jobs:
       - name: Install dependencies
         run: pip install pyyaml
       - name: Verify audit agent immutability guards
-        run: |
-          python -c "
-          import yaml
-          with open('agents/audit/policy.yaml') as f:
-              p = yaml.safe_load(f)
-          assert 'modify_audit_log' in p['deny']['actions']
-          assert 'delete_audit_log' in p['deny']['actions']
-          print('audit-check: PASSED')
-          "
+        run: python scripts/check_override_audit.py
 
   accessibility-gate:
     name: accessibility-gate
@@ -202,14 +153,4 @@ jobs:
       - name: Install dependencies
         run: pip install pyyaml
       - name: Verify accessibility agent gate config
-        run: |
-          python -c "
-          import yaml
-          with open('agents/accessibility/agent.yaml') as f:
-              a = yaml.safe_load(f)
-          assert a['human_gate'] == 'blocks_release'
-          with open('agents/accessibility/policy.yaml') as f:
-              p = yaml.safe_load(f)
-          assert 'bypass_wcag_checks' in p['deny']['actions']
-          print('accessibility-gate: PASSED')
-          "
+        run: python scripts/check_accessibility.py
