@@ -33,7 +33,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install dependencies
-        run: pip install pytest pyyaml
+        run: pip install pytest pyyaml jsonschema
       - name: Run tests
         run: pytest tests/ agents/ -v
 
