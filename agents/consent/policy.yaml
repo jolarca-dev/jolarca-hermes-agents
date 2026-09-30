@@ -1,0 +1,30 @@
+allow:
+  actions:
+    - detect_pii
+    - redact_pii
+    - log_redaction
+    - support_dsar
+    - check_purpose_limitation
+
+deny:
+  actions:
+    - generate_content
+    - store_pii_in_logs
+    - retain_pii_beyond_retention_period
+    - cross_tenant_pii_access
+    - mission_platform_access
+  resources:
+    - "jol-*"
+    - "journeyoflife-org/*"
+    - "/opt/jol/*"
+
+escalation:
+  patterns:
+    - "pii_detected_in_output"
+    - "dsar_request_received"
+    - "purpose_limitation_violation"
+  action: block
+
+retention:
+  max_days: 30
+  log_level: warning

@@ -1,0 +1,14 @@
+identity_tag: "agent:jolarca:observability"
+name: "Observability"
+description: "Model/eval drift, token+cost telemetry, incident signals."
+layer: 0  # cross-cutting, spans all layers
+depends_on: []
+data_classification: internal
+model_policy:
+  provider: null  # observability monitors, does not generate
+  model: null
+tool_grants:
+  - collect_telemetry
+  - detect_drift
+  - emit_incident_signal
+human_gate: none

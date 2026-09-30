@@ -1,0 +1,28 @@
+allow:
+  actions:
+    - collect_telemetry
+    - detect_drift
+    - emit_incident_signal
+    - query_metrics
+
+deny:
+  actions:
+    - generate_content
+    - modify_telemetry
+    - suppress_incident_signals
+    - mission_platform_access
+  resources:
+    - "jol-*"
+    - "journeyoflife-org/*"
+    - "/opt/jol/*"
+
+escalation:
+  patterns:
+    - "drift_detected"
+    - "cost_ceiling_approached"
+    - "error_rate_spike"
+  action: escalate
+
+retention:
+  max_days: 90
+  log_level: info
