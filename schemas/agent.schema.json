@@ -38,8 +38,8 @@
       "type": "object",
       "required": ["provider", "model"],
       "properties": {
-        "provider": {"type": "string"},
-        "model": {"type": "string"},
+        "provider": {"type": ["string", "null"]},
+        "model": {"type": ["string", "null"]},
         "temperature": {"type": "number", "minimum": 0, "maximum": 2},
         "max_tokens": {"type": "integer", "minimum": 1}
       }
@@ -51,7 +51,7 @@
     },
     "human_gate": {
       "type": "string",
-      "enum": ["none", "editorial", "blocks_all", "blocks_release"],
+      "enum": ["none", "editorial", "blocks_all", "blocks_release", "human_approver"],
       "description": "Human approval gate type."
     }
   },
