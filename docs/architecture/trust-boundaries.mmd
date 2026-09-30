@@ -1,0 +1,74 @@
+---
+title: "Trust Boundaries — Data Flow and Security Zones"
+---
+graph LR
+    subgraph PublicZone["PUBLIC ZONE<br/>No classification required"]
+        EndUser["End User / Browser"]
+        PublicOutput["Published Website Content<br/>(seo, accessibility, website)<br/>Classification: public"]
+    end
+
+    subgraph TrustBoundary1["━━━ TRUST BOUNDARY 1: Publication Gate ━━━"]
+        direction TB
+    end
+
+    subgraph InternalZone["INTERNAL ZONE<br/>Classification: internal+"]
+        subgraph OperatorTrust["OPERATOR TRUST BOUNDARY"]
+            Operator["Marketplace Operator<br/>(authenticated human)"]
+        end
+
+        subgraph AgentCore["AGENT FLEET CORE<br/>(policy-enforced, CI-validated)"]
+            Orchestrator["orchestrator<br/>(Layer 0, internal)"]
+            Guardrails["guardrails<br/>(Layer 1, internal)"]
+            Audit["audit<br/>(cross-cutting, confidential)"]
+            Observability["observability<br/>(cross-cutting, internal)"]
+        end
+    end
+
+    subgraph TrustBoundary2["━━━ TRUST BOUNDARY 2: Data Access ━━━"]
+        direction TB
+    end
+
+    subgraph ConfidentialZone["CONFIDENTIAL ZONE<br/>Classification: confidential+"]
+        subgraph DataAgents["DATA AGENTS<br/>(approved-source only, tenant-scoped)"]
+            Consent["consent<br/>(Layer 2, restricted)"]
+            RAG["rag<br/>(Layer 2, confidential)"]
+            Content["content<br/>(Layer 3, confidential)"]
+            Translation["translation<br/>(Layer 4, confidential)"]
+            Editorial["editorial<br/>(Layer 5, confidential)"]
+        end
+
+        ApprovedSources["Approved Sources<br/>(jolarca-docs, jolarca-control,<br/>jolarca-security)<br/>Registry: policies/approved_sources.md"]
+    end
+
+    subgraph TrustBoundary3["━━━ TRUST BOUNDARY 3: External Processing ━━━"]
+        direction TB
+    end
+
+    subgraph ExternalZone["EXTERNAL ZONE<br/>Third-party processor (DPIA required)"]
+        LLMProvider["LLM Provider<br/>(not yet selected)<br/>DPA + DPIA required<br/>per policies/model-policy.md"]
+    end
+
+    subgraph ExcludedZone["EXCLUDED ZONE<br/>No access permitted (ADR-0004)"]
+        MissionDB["Mission Platform DB<br/>(external, excluded per ADR-0004)<br/>No writes (C8)<br/>No shared memory (C9)"]
+    end
+
+    %% Data flows
+    Operator -->|"authenticated requests"| Orchestrator
+    Orchestrator -->|"delegates (internal)"| Guardrails
+    Guardrails -->|"escalates doctrinal<br/>content to human (C7)"| Operator
+    Guardrails -->|"allows safe requests"| Consent
+    Guardrails -->|"allows safe requests"| RAG
+    RAG -->|"retrieves from<br/>approved sources only (C1)"| ApprovedSources
+    RAG -->|"tenant-scoped results<br/>(C2)"| Content
+    Content -->|"drafts with provenance (C4)"| Translation
+    Translation -->|"sensitive terms flagged (C5)"| Editorial
+    Editorial -->|"human approval (C3)"| PublicOutput
+
+    Orchestrator -.->|"model calls<br/>(when provider approved)"| LLMProvider
+    Content -.->|"generation calls<br/>(confidential data exposed)"| LLMProvider
+
+    Audit -.->|"immutable logs<br/>all agents (C17)"| AgentCore
+    Observability -.->|"telemetry<br/>all agents"| AgentCore
+
+    Orchestrator -.-x|"DENIED: no writes (C8)<br/>no shared memory (C9)"| MissionDB
+    RAG -.-x|"DENIED: no mission sources"| MissionDB
