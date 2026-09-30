@@ -3,6 +3,7 @@ allow:
     - delegate_to_agent
     - check_budget
     - log_decision
+    - kill_switch
   agents:
     - guardrails
     - rag

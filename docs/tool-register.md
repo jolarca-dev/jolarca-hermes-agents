@@ -20,7 +20,7 @@ document, never the reverse.
 
 | Agent | Classification | Gate | `tool_grants` |
 |---|---|---|---|
-| orchestrator | internal | none | `delegate_to_agent`, `check_budget`, `kill_switch` |
+| orchestrator | internal | none | `delegate_to_agent`, `check_budget`, `kill_switch`, `log_decision` |
 | guardrails | internal | blocks_all | `inspect_input`, `inspect_output`, `block_request`, `escalate_to_human` |
 | consent | restricted | blocks_all | `detect_pii`, `redact_pii`, `log_redaction`, `support_dsar` |
 | rag | confidential | none | `query_index`, `retrieve_documents`, `check_source_approval` |
@@ -33,9 +33,9 @@ document, never the reverse.
 | observability | internal | none | `collect_telemetry`, `detect_drift`, `emit_incident_signal` |
 | website | public | editorial | `compose_page`, `check_editorial_approval`, `check_accessibility_gate` |
 
-**Totals (verified):** 40 grants across 12 agents; 38 distinct tools. Two tools are
-shared: `detect_drift` (audit, observability) and `request_editorial_approval`
-(content, translation).
+**Totals (verified):** 41 grants across 12 agents; 39 distinct tools. Three tools are
+shared: `detect_drift` (audit, observability), `request_editorial_approval`
+(content, translation), and `log_decision` (orchestrator, audit).
 
 ## Tool index → control mapping
 
@@ -71,7 +71,7 @@ shared: `detect_drift` (audit, observability) and `request_editorial_approval`
 | `reject_content` | editorial | C3 | Reject output failing review |
 | `check_provenance_completeness` | editorial | C4 | Every claim carries a citation |
 | `log_approval` | editorial | C3, C17 | Durable approval record (7-year retention) |
-| `log_decision` | audit | C17 | Immutable decision logging |
+| `log_decision` | orchestrator, audit | C17 | Immutable decision logging |
 | `hash_evidence` | audit | C4, C17 | Evidence hashing for tamper detection |
 | `detect_drift` | audit, observability | — | Model/eval drift detection (monitoring) |
 | `collect_telemetry` | observability | C15 | Token + cost telemetry |
@@ -93,14 +93,10 @@ These are pre-existing conditions surfaced by consolidating the grants. They are
 **not** introduced by this register and are recorded for follow-up, not silently
 changed here:
 
-1. **Orchestrator grant/policy mismatch.** `agents/orchestrator/agent.yaml` grants
-   `kill_switch`, but `agents/orchestrator/policy.yaml` `allow.actions` lists
-   `log_decision` instead. `kill_switch` must remain a tool grant (enforced by
-   `scripts/check_kill_switch.py`, C16); reconcile `log_decision` between the two files.
-2. **Shared `detect_drift`.** Held by both audit and observability. Acceptable for
+1. **Shared `detect_drift`.** Held by both audit and observability. Acceptable for
    cross-cutting agents, but confirm the two emit to distinct sinks so audit evidence
    stays immutable (C17).
-3. **Composition over re-implementation.** `website` holds `check_editorial_approval`
+2. **Composition over re-implementation.** `website` holds `check_editorial_approval`
    and `check_accessibility_gate` rather than re-running either check — consistent with
    the HERMES-0001 invariant. Keep it that way.
 
@@ -109,3 +105,4 @@ changed here:
 | Date | Change | Authority |
 |---|---|---|
 | 2026-10-01 | Initial register derived from the 12 `agent.yaml` `tool_grants` | Agent (proposed, PR review) |
+| 2026-10-01 | Fixed orchestrator grant/policy mismatch; added `log_decision` to orchestrator tool_grants and `kill_switch` to policy allow.actions | Agent (PR review) |
