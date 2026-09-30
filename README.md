@@ -63,17 +63,20 @@ jolarca-hermes-agents/
 │   ├── audit/                 # Cross-cutting: immutable logging
 │   ├── observability/         # Cross-cutting: telemetry, drift
 │   └── website/               # Layer 6: site composition
-├── schemas/                   # JSON Schemas (agent, policy, provenance)
+├── schemas/                   # JSON Schemas (agent, policy, provenance, eval-case)
 ├── policies/                  # approved_sources, retention, terminology
-├── scripts/                   # Validation scripts
-├── tests/                     # Cross-agent tests
+├── scripts/                   # Validation + control-enforcement scripts
+├── tests/                     # Cross-agent + schema-conformance tests
+├── evaluations/               # Adversarial/PII fixtures (C11, C12, C8-C10)
 ├── docs/
 │   ├── capability-map.md      # 12-agent roster + build order
 │   ├── control-matrix.md      # 17 controls -> enforcement -> evidence
+│   ├── tool-register.md       # Consolidated tool_grants -> control mapping
 │   ├── target-tree.md         # Directory structure spec
 │   └── adr/
-│       └── HERMES-0001-*.md   # Architecture decisions
-├── .github/workflows/ci.yml   # CI: lint, test, security + 8 control jobs
+│       ├── HERMES-0001-*.md   # Architecture decisions
+│       └── HERMES-0002-*.md   # Evaluations + tool register
+├── .github/workflows/ci.yml   # CI: lint, test, security + 9 control jobs
 ├── Makefile                   # lint, test, validate, check
 ├── pyproject.toml             # Python project config
 └── CHANGELOG.md               # Change log
@@ -84,8 +87,9 @@ jolarca-hermes-agents/
 ```bash
 make check       # Full pre-merge check (lint + validate + deny-patterns)
 make lint        # Ruff linter
-make test        # Run all tests (54 tests)
+make test        # Run all tests
 make validate    # Validate agent schemas + JSON schemas
+make evals       # Validate evaluation suite grounding + coverage
 make deny-patterns  # Scan for forbidden mission-platform references
 ```
 
@@ -95,7 +99,7 @@ make deny-patterns  # Scan for forbidden mission-platform references
 
 **Supplementary control jobs:** `agent-policy-guard`, `deny-pattern-scan`,
 `pii-scan`, `retention-check`, `budget-check`, `kill-switch-test`,
-`audit-check`, `accessibility-gate`
+`audit-check`, `accessibility-gate`, `adversarial-evals`
 
 ## Contributing
 

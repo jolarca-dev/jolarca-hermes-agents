@@ -5,7 +5,7 @@
 # CI job `lint` runs `make check`.
 # ──────────────────────────────────────────────────────────────────────────────
 
-.PHONY: lint typecheck test validate check agents schemas deny-patterns help
+.PHONY: lint typecheck test validate check agents schemas deny-patterns evals help
 
 VENV := .venv/bin
 PYTHON := $(VENV)/python
@@ -38,5 +38,8 @@ schemas:  ## Validate JSON Schemas are well-formed
 
 deny-patterns:  ## Scan for forbidden mission-platform references
 	$(PYTHON) scripts/check_deny_patterns.py
+
+evals:  ## Validate evaluation suite grounding + coverage (C11/C12)
+	$(PYTHON) scripts/check_eval_coverage.py
 
 check: lint validate deny-patterns  ## Full pre-merge check (CI runs this)

@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jolarca.dev/schemas/eval-case.schema.json",
+  "title": "Evaluation Case Suite",
+  "description": "Schema for evaluations/**/cases.yaml — declarative adversarial, privacy, and regression cases mapped to control-matrix controls and grounded in agent policy entries.",
+  "type": "object",
+  "required": ["suite", "cases"],
+  "properties": {
+    "suite": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Suite identifier; matches the containing directory name."
+    },
+    "control": {
+      "type": "string",
+      "pattern": "^C[0-9]+$",
+      "description": "Primary control-matrix control this suite strengthens."
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable intent of the suite."
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/case"}
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "case": {
+      "type": "object",
+      "required": ["id", "input", "expected_action", "maps_to", "control"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$",
+          "description": "Stable case identifier."
+        },
+        "input": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The adversarial or benign input presented to the agent."
+        },
+        "context": {
+          "type": "string",
+          "description": "Optional note on why the case is hard or what it guards."
+        },
+        "expected_action": {
+          "type": "string",
+          "enum": ["block", "escalate", "deny", "redact", "allow"],
+          "description": "Behaviour the fleet must exhibit for this input."
+        },
+        "maps_to": {
+          "type": "object",
+          "required": ["agent", "entry"],
+          "properties": {
+            "agent": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9-]*$",
+              "description": "Module id whose policy.yaml grounds this case."
+            },
+            "entry": {
+              "type": "string",
+              "minLength": 1,
+              "description": "A real entry in that agent's policy.yaml (pattern or action)."
+            },
+            "kind": {
+              "type": "string",
+              "enum": ["escalation_pattern", "deny_action", "deny_resource", "allow_action"],
+              "description": "Where in the policy the entry lives."
+            }
+          },
+          "additionalProperties": false
+        },
+        "control": {
+          "type": "string",
+          "pattern": "^C[0-9]+$",
+          "description": "Control-matrix control this case exercises."
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["info", "low", "medium", "high", "critical"]
+        },
+        "tags": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

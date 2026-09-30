@@ -30,10 +30,10 @@ A control without an enforcement mechanism is folklore (ADR-0004 R3: "Enforced, 
 | C6 | Accessibility validation before release | `accessibility` agent runs WCAG checks; `scripts/check_accessibility.py` validates WCAG compliance | `agents/accessibility/policy.yaml`, validation report | `accessibility-gate` |
 | C7 | No autonomous doctrinal or pastoral decisions | `guardrails` agent hard-escalates to human; `scripts/check_doctrine_escalation.py` validates escalation predicate | `agents/guardrails/policy.yaml`, escalation log | `agent-policy-guard` |
 | C8 | No direct write access to mission databases | `orchestrator` agent policy denies mission DB writes; `scripts/check_deny_patterns.py` scans for mission-prefixed references | `agents/orchestrator/policy.yaml`, deny log | `deny-pattern-scan` |
-| C9 | No shared conversational memory with JOL | `orchestrator` agent isolates context; `scripts/check_memory_isolation.py` validates no cross-program memory | `agents/orchestrator/policy.yaml`, memory audit | `deny-pattern-scan` |
-| C10 | Separate model and data-processing policies from JOL | `policies/` directory contains jolarca-specific policies; `scripts/check_policy_separation.py` validates no JOL policy references | `policies/*.md`, policy audit | `deny-pattern-scan` |
-| C11 | PII redaction before logging | `consent` agent redacts PII; `scripts/check_pii_redaction.py` validates no PII in logs | `agents/consent/policy.yaml`, redaction log | `pii-scan` |
-| C12 | Prompt-injection defence | `guardrails` agent detects injection; `scripts/check_injection_defence.py` validates injection patterns blocked | `agents/guardrails/policy.yaml`, injection log | `agent-policy-guard` |
+| C9 | No shared conversational memory with JOL | `orchestrator` policy denies `cross_program_memory_access`; `scripts/check_deny_patterns.py` scans for mission-platform references | `agents/orchestrator/policy.yaml`, memory audit | `deny-pattern-scan` |
+| C10 | Separate model and data-processing policies from JOL | `policies/` holds jolarca-specific policies; `scripts/check_deny_patterns.py` scans for mission-platform policy references | `policies/*.md`, policy audit | `deny-pattern-scan` |
+| C11 | PII redaction before logging | `consent` agent redacts PII; `scripts/check_pii_redaction.py` validates policy; `scripts/check_eval_coverage.py` validates `evaluations/privacy/cases.yaml` | `agents/consent/policy.yaml`, `evaluations/privacy/cases.yaml`, redaction log | `pii-scan`, `adversarial-evals` |
+| C12 | Prompt-injection defence | `guardrails` agent detects injection; `scripts/check_injection_defence.py` validates patterns; `scripts/check_eval_coverage.py` validates `evaluations/prompt-injection/cases.yaml` | `agents/guardrails/policy.yaml`, `evaluations/prompt-injection/cases.yaml`, injection log | `agent-policy-guard`, `adversarial-evals` |
 | C13 | Model vendor risk assessment | `jolarca-vendor` repo holds vendor DPIA; `scripts/check_vendor_risk.py` validates all LLM providers are registered | `jolarca-vendor` (external), vendor register | `vendor-risk-check` |
 | C14 | Output retention and deletion schedule | `audit` agent enforces retention policy; `scripts/check_retention.py` validates deletion schedule | `policies/retention.md`, retention log | `retention-check` |
 | C15 | Cost/token budget ceilings | `orchestrator` agent enforces budget; `scripts/check_budget.py` validates token usage within ceiling | `agents/orchestrator/policy.yaml`, budget log | `budget-check` |
@@ -44,11 +44,12 @@ A control without an enforcement mechanism is folklore (ADR-0004 R3: "Enforced, 
 
 ## Enforcement Layers
 
-Controls are enforced at three layers:
+Controls are enforced at four layers:
 
 1. **Agent policy layer** — Each agent's `policy.yaml` declares allow/deny rules. Enforced by `agent-policy-guard` CI job.
 2. **Cross-agent validation layer** — Scripts that validate cross-agent contracts (e.g., provenance, editorial approval). Enforced by `provenance-check`, `accessibility-gate`.
 3. **Fleet-wide deny-list layer** — Scripts that scan for forbidden patterns (e.g., mission-prefixed references, mission-platform access). Enforced by `deny-pattern-scan`.
+4. **Adversarial evaluation layer** — Declarative attack/PII fixtures in `evaluations/`, grounded in agent policy and validated for coverage. Enforced by `adversarial-evals`.
 
 ---
 
@@ -66,6 +67,7 @@ Controls are enforced at three layers:
 | `budget-check` | C15 | orchestrator |
 | `kill-switch-test` | C16 | orchestrator |
 | `audit-check` | C17 | audit |
+| `adversarial-evals` | C11, C12 | consent, guardrails, orchestrator |
 
 ---
 
@@ -125,3 +127,4 @@ This control matrix is approved when:
 |---|---|---|
 | 2026-09-30 | Initial draft | Agent (pending review) |
 | 2026-09-30 | All open questions resolved; success criteria met; status promoted to Accepted | Agent (accepted by solo operator) |
+| 2026-10-01 | Added `adversarial-evals` job + `evaluations/` evidence for C11/C12; corrected C9/C10 to cite the existing `check_deny_patterns.py` (non-existent scripts removed) | Agent (proposed, PR review) |
