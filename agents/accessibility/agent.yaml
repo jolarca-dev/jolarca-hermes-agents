@@ -1,0 +1,16 @@
+identity_tag: "agent:jolarca:accessibility"
+name: "Accessibility"
+description: "WCAG validation, release gate."
+layer: 4
+depends_on:
+  - content
+data_classification: public
+model_policy:
+  provider: null
+  model: null
+tool_grants:
+  - validate_wcag
+  - check_alt_text
+  - check_color_contrast
+  - block_release
+human_gate: blocks_release

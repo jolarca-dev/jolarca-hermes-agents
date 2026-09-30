@@ -1,0 +1,26 @@
+allow:
+  actions:
+    - generate_metadata
+    - generate_structured_data
+    - check_keyword_fitness
+    - log_seo_analysis
+
+deny:
+  actions:
+    - publish_without_approval
+    - modify_content_body
+    - keyword_stuffing
+    - mission_platform_access
+  resources:
+    - "jol-*"
+    - "journeyoflife-org/*"
+    - "/opt/jol/*"
+
+escalation:
+  patterns:
+    - "keyword_stuffing_detected"
+  action: block
+
+retention:
+  max_days: 90
+  log_level: info

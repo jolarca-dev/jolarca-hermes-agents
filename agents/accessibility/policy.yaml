@@ -1,0 +1,28 @@
+allow:
+  actions:
+    - validate_wcag
+    - check_alt_text
+    - check_color_contrast
+    - block_release
+    - log_accessibility_check
+
+deny:
+  actions:
+    - publish_without_approval
+    - bypass_wcag_checks
+    - modify_content_body
+    - mission_platform_access
+  resources:
+    - "jol-*"
+    - "journeyoflife-org/*"
+    - "/opt/jol/*"
+
+escalation:
+  patterns:
+    - "wcag_violation_detected"
+    - "missing_alt_text"
+  action: block
+
+retention:
+  max_days: 90
+  log_level: info
