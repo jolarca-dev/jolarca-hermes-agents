@@ -11,4 +11,5 @@ tool_grants:
   - delegate_to_agent
   - check_budget
   - kill_switch
+  - log_decision
 human_gate: none
