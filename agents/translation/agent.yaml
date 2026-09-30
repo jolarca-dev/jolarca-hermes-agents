@@ -1,0 +1,15 @@
+identity_tag: "agent:jolarca:translation"
+name: "Translation"
+description: "Locale rendering, terminology consistency."
+layer: 4
+depends_on:
+  - content
+data_classification: confidential
+model_policy:
+  provider: null
+  model: null
+tool_grants:
+  - translate_content
+  - check_terminology
+  - request_editorial_approval
+human_gate: editorial

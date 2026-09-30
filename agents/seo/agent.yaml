@@ -1,0 +1,15 @@
+identity_tag: "agent:jolarca:seo"
+name: "SEO"
+description: "Metadata, structured data, keyword fitness."
+layer: 4
+depends_on:
+  - content
+data_classification: public
+model_policy:
+  provider: null
+  model: null
+tool_grants:
+  - generate_metadata
+  - generate_structured_data
+  - check_keyword_fitness
+human_gate: editorial

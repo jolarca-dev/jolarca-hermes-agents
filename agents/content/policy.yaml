@@ -1,0 +1,27 @@
+allow:
+  actions:
+    - generate_draft
+    - attach_provenance
+    - request_editorial_approval
+    - log_generation
+
+deny:
+  actions:
+    - publish_without_approval
+    - use_unapproved_sources
+    - cross_tenant_content_access
+    - mission_platform_access
+  resources:
+    - "jol-*"
+    - "journeyoflife-org/*"
+    - "/opt/jol/*"
+
+escalation:
+  patterns:
+    - "unapproved_source_used"
+    - "provenance_missing"
+  action: block
+
+retention:
+  max_days: 90
+  log_level: info

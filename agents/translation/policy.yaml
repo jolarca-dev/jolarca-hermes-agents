@@ -1,0 +1,27 @@
+allow:
+  actions:
+    - translate_content
+    - check_terminology
+    - request_editorial_approval
+    - log_translation
+
+deny:
+  actions:
+    - publish_without_approval
+    - modify_source_content
+    - use_unapproved_terminology
+    - mission_platform_access
+  resources:
+    - "jol-*"
+    - "journeyoflife-org/*"
+    - "/opt/jol/*"
+
+escalation:
+  patterns:
+    - "sensitive_content_detected"
+    - "terminology_violation"
+  action: escalate
+
+retention:
+  max_days: 90
+  log_level: info

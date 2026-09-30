@@ -1,0 +1,16 @@
+identity_tag: "agent:jolarca:content"
+name: "Content"
+description: "Draft generation from retrieved sources only."
+layer: 3
+depends_on:
+  - rag
+  - guardrails
+data_classification: confidential
+model_policy:
+  provider: null  # model selection deferred to vendor risk assessment
+  model: null
+tool_grants:
+  - generate_draft
+  - attach_provenance
+  - request_editorial_approval
+human_gate: editorial
