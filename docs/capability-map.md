@@ -1,6 +1,6 @@
 # Agent Capability Map
 
-**Status:** Draft — pending review  
+**Status:** Accepted  
 **Date:** 2026-09-30  
 **ADR prefix:** HERMES-
 
