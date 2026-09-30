@@ -1,0 +1,15 @@
+identity_tag: "agent:jolarca:rag"
+name: "RAG"
+description: "Approved-source retrieval, tenant/locale-scoped index access."
+layer: 2
+depends_on:
+  - guardrails
+data_classification: confidential
+model_policy:
+  provider: null  # rag retrieves, does not generate
+  model: null
+tool_grants:
+  - query_index
+  - retrieve_documents
+  - check_source_approval
+human_gate: none

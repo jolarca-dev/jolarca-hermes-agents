@@ -1,0 +1,16 @@
+identity_tag: "agent:jolarca:consent"
+name: "Consent"
+description: "PII detection/redaction, DSAR support, purpose-limitation checks."
+layer: 2
+depends_on:
+  - guardrails
+data_classification: restricted
+model_policy:
+  provider: null  # consent inspects and redacts, does not generate
+  model: null
+tool_grants:
+  - detect_pii
+  - redact_pii
+  - log_redaction
+  - support_dsar
+human_gate: blocks_all

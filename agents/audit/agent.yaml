@@ -1,0 +1,14 @@
+identity_tag: "agent:jolarca:audit"
+name: "Audit"
+description: "Immutable decision logging, evidence hashing, drift detection."
+layer: 0  # cross-cutting, spans all layers
+depends_on: []
+data_classification: confidential
+model_policy:
+  provider: null  # audit logs, does not generate
+  model: null
+tool_grants:
+  - log_decision
+  - hash_evidence
+  - detect_drift
+human_gate: none

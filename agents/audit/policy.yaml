@@ -1,0 +1,27 @@
+allow:
+  actions:
+    - log_decision
+    - hash_evidence
+    - detect_drift
+    - query_audit_log
+
+deny:
+  actions:
+    - generate_content
+    - modify_audit_log
+    - delete_audit_log
+    - mission_platform_access
+  resources:
+    - "jol-*"
+    - "journeyoflife-org/*"
+    - "/opt/jol/*"
+
+escalation:
+  patterns:
+    - "drift_detected"
+    - "audit_log_tampering_attempt"
+  action: escalate
+
+retention:
+  max_days: 2555  # 7 years for audit logs
+  log_level: info
