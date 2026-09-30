@@ -1,0 +1,16 @@
+identity_tag: "agent:jolarca:guardrails"
+name: "Guardrails"
+description: "Prompt-injection defence, deny-list enforcement, and doctrinal/pastoral escalation."
+layer: 1
+depends_on:
+  - orchestrator
+data_classification: internal
+model_policy:
+  provider: null  # guardrails inspects, does not generate
+  model: null
+tool_grants:
+  - inspect_input
+  - inspect_output
+  - block_request
+  - escalate_to_human
+human_gate: blocks_all

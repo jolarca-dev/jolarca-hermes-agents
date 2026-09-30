@@ -31,4 +31,4 @@ the [jolarca-dev security policy](https://github.com/jolarca-dev/.github/blob/ma
 
 - Commit credentials, tokens, API keys, or cryptographic key material
 - Commit Terraform state files (*.tfstate, *.tfstate.*)
-- Reference mission-platform (`journeyoflife-org` / `jol-*`) resources (ADR-0004 R4)
+- Reference mission-platform resources (ADR-0004 R4)

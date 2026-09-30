@@ -1,0 +1,14 @@
+identity_tag: "agent:jolarca:orchestrator"
+name: "Orchestrator"
+description: "Routing, delegation, budget/cost caps, and kill-switch for the Hermes agent fleet."
+layer: 0
+depends_on: []
+data_classification: internal
+model_policy:
+  provider: null  # orchestrator delegates, does not call models directly
+  model: null
+tool_grants:
+  - delegate_to_agent
+  - check_budget
+  - kill_switch
+human_gate: none

@@ -15,10 +15,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install ruff
-        run: pip install ruff
+      - name: Install dependencies
+        run: pip install ruff pyyaml
       - name: Ruff lint
         run: ruff check .
+      - name: Validate agents
+        run: python scripts/validate_agents.py
+      - name: Check deny patterns
+        run: python scripts/check_deny_patterns.py
 
   test:
     name: test
@@ -28,10 +32,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install pytest
-        run: pip install pytest
+      - name: Install dependencies
+        run: pip install pytest pyyaml
       - name: Run tests
-        run: pytest tests/ || echo "No tests yet"
+        run: pytest tests/ agents/ -v
 
   security:
     name: security

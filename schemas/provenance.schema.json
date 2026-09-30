@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jolarca.dev/schemas/provenance.schema.json",
+  "title": "Source Provenance Record",
+  "description": "Schema for provenance records attached to generated claims.",
+  "type": "object",
+  "required": ["claim_id", "agent_tag", "sources", "timestamp"],
+  "properties": {
+    "claim_id": {
+      "type": "string",
+      "description": "Unique identifier for the claim."
+    },
+    "agent_tag": {
+      "type": "string",
+      "pattern": "^agent:jolarca:[a-z][a-z0-9-]*$",
+      "description": "Identity tag of the agent that generated the claim."
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["source_id", "source_type"],
+        "properties": {
+          "source_id": {"type": "string"},
+          "source_type": {
+            "type": "string",
+            "enum": ["approved_document", "approved_database", "approved_api", "user_input"]
+          },
+          "excerpt": {"type": "string"},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+        }
+      }
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "tenant_id": {
+      "type": "string",
+      "description": "Tenant that requested the generation."
+    },
+    "locale": {
+      "type": "string",
+      "description": "Locale of the generated content."
+    }
+  },
+  "additionalProperties": false
+}

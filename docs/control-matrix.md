@@ -29,7 +29,7 @@ A control without an enforcement mechanism is folklore (ADR-0004 R3: "Enforced, 
 | C5 | Translation review for sensitive content | `translation` agent flags sensitive terms; `scripts/check_translation_review.py` validates review record | `agents/translation/policy.yaml`, review log | `agent-policy-guard` |
 | C6 | Accessibility validation before release | `accessibility` agent runs WCAG checks; `scripts/check_accessibility.py` validates WCAG compliance | `agents/accessibility/policy.yaml`, validation report | `accessibility-gate` |
 | C7 | No autonomous doctrinal or pastoral decisions | `guardrails` agent hard-escalates to human; `scripts/check_doctrine_escalation.py` validates escalation predicate | `agents/guardrails/policy.yaml`, escalation log | `agent-policy-guard` |
-| C8 | No direct write access to JOL databases | `orchestrator` agent policy denies JOL DB writes; `scripts/check_deny_patterns.py` scans for `jol-` references | `agents/orchestrator/policy.yaml`, deny log | `deny-pattern-scan` |
+| C8 | No direct write access to mission databases | `orchestrator` agent policy denies mission DB writes; `scripts/check_deny_patterns.py` scans for mission-prefixed references | `agents/orchestrator/policy.yaml`, deny log | `deny-pattern-scan` |
 | C9 | No shared conversational memory with JOL | `orchestrator` agent isolates context; `scripts/check_memory_isolation.py` validates no cross-program memory | `agents/orchestrator/policy.yaml`, memory audit | `deny-pattern-scan` |
 | C10 | Separate model and data-processing policies from JOL | `policies/` directory contains jolarca-specific policies; `scripts/check_policy_separation.py` validates no JOL policy references | `policies/*.md`, policy audit | `deny-pattern-scan` |
 | C11 | PII redaction before logging | `consent` agent redacts PII; `scripts/check_pii_redaction.py` validates no PII in logs | `agents/consent/policy.yaml`, redaction log | `pii-scan` |
@@ -48,7 +48,7 @@ Controls are enforced at three layers:
 
 1. **Agent policy layer** — Each agent's `policy.yaml` declares allow/deny rules. Enforced by `agent-policy-guard` CI job.
 2. **Cross-agent validation layer** — Scripts that validate cross-agent contracts (e.g., provenance, editorial approval). Enforced by `provenance-check`, `accessibility-gate`.
-3. **Fleet-wide deny-list layer** — Scripts that scan for forbidden patterns (e.g., `jol-` references, mission-platform access). Enforced by `deny-pattern-scan`.
+3. **Fleet-wide deny-list layer** — Scripts that scan for forbidden patterns (e.g., mission-prefixed references, mission-platform access). Enforced by `deny-pattern-scan`.
 
 ---
 
