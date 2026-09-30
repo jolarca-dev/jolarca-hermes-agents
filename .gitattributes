@@ -1,0 +1,26 @@
+# Enforce LF line endings for all text files
+* text=auto eol=lf
+
+# Explicitly mark binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+
+# Python - LF, utf-8
+*.py text diff=python
+*.pyi text diff=python
+
+# YAML / JSON / Markdown
+*.yml text
+*.yaml text
+*.json text
+*.md text
+
+# Shell scripts - LF (no CRLF)
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Lock files - commit but dont diff
+*.lock text
