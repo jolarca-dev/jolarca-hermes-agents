@@ -5,6 +5,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added — 2026-10-01
+
+- `docs/adr/HERMES-0003-model-sourcing-and-mission-boundary.md`: records that self-hosted
+  inference for the Baltic (LT/LV/EE) pilot is a mission-side concern; this marketplace
+  fleet must not couple to a mission inference resource (ADR-0004 R4, enforced by
+  `check_deny_patterns.py`); two compliant sourcing paths are defined — a marketplace-owned
+  self-hosted endpoint (assessed as infrastructure risk + model provenance, not a third-party
+  DPIA) or a registered third-party provider via the full C13 DPIA. Providers stay `null`; no
+  mission token is introduced.
+
+### Changed — 2026-10-01
+
+- `docs/adr/README.md`: added the HERMES-0003 row and restored the missing HERMES-0002 index
+  entry; `docs/target-tree.md` ADR list extended to HERMES-0003
+
 ### Changed — 2026-10-01
 
 - `evaluations/functional/README.md` and `evaluations/regression/README.md`: explicit
