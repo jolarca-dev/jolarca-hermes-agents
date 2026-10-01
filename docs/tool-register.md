@@ -87,18 +87,50 @@ Model selection is deferred to the `jolarca-vendor` DPIA (C13), so no model-invo
 tool grants exist yet. When a provider is registered, add its invocation grant here
 and record the vendor risk assessment.
 
-## Observations and follow-ups
+## Observations
 
-These are pre-existing conditions surfaced by consolidating the grants. They are
-**not** introduced by this register and are recorded for follow-up, not silently
-changed here:
+Both observations were reviewed on 2026-10-01 against the agents' `policy.yaml`
+files. Each verdict cites the evidence that settles it rather than reasoning alone.
+The orchestrator grant/policy mismatch originally listed here was fixed in a
+follow-up change and is no longer open.
 
-1. **Shared `detect_drift`.** Held by both audit and observability. Acceptable for
-   cross-cutting agents, but confirm the two emit to distinct sinks so audit evidence
-   stays immutable (C17).
-2. **Composition over re-implementation.** `website` holds `check_editorial_approval`
-   and `check_accessibility_gate` rather than re-running either check — consistent with
-   the HERMES-0001 invariant. Keep it that way.
+1. **Shared `detect_drift` (audit + observability) — confirmed correct by design.**
+   The two agents provably write to different sinks:
+
+   | Signal | audit | observability |
+   |---|---|---|
+   | Store operated on | `query_audit_log` | `query_metrics` |
+   | Integrity denies | `modify_audit_log`, `delete_audit_log` | `modify_telemetry`, `suppress_incident_signals` |
+   | Retention | 2555 days (7 years) | 90 days |
+
+   Divergent retention alone rules out a shared store, and observability holds no
+   grant that could write to or alter the audit log — so audit evidence immutability
+   (C17) is not exposed by the shared tool.
+
+   **Residual follow-up (runtime-time, not a defect in these definitions):** both
+   agents declare the same escalation pattern token `drift_detected` with
+   `action: escalate`, yet they mean different things — audit drift (evidence and log
+   integrity, paired with `audit_log_tampering_attempt`) versus model/eval drift
+   (paired with `error_rate_spike` and `cost_ceiling_approached`). Sibling patterns
+   disambiguate in context, but a runtime keying alerts on the pattern name alone
+   would double-fire. Either qualify the pattern names or route escalation by
+   emitting agent id.
+
+2. **Composition over re-implementation (`website`) — confirmed correct by design.**
+   `website` holds *verification* verbs only; the *producing* verbs stay with their
+   owning agents and no verb overlaps:
+
+   | Agent | Verbs |
+   |---|---|
+   | website | `check_editorial_approval`, `check_accessibility_gate` — consume verdicts |
+   | editorial | `approve_content`, `reject_content`, `check_provenance_completeness` — produce |
+   | accessibility | `validate_wcag`, `check_alt_text`, `check_color_contrast`, `block_release` — produce |
+
+   Reinforced by the `website` denies (`publish_without_approval`,
+   `use_unapproved_content`, `bypass_accessibility_gate`) with
+   `escalation.action: block` — a hard fail-safe at the publishing edge — and by
+   layer ordering, since `website` (Layer 6) depends on `editorial` (Layer 5) and
+   `accessibility` (Layer 4). Matches the HERMES-0001 invariant; keep it that way.
 
 ## Revision History
 
@@ -106,3 +138,4 @@ changed here:
 |---|---|---|
 | 2026-10-01 | Initial register derived from the 12 `agent.yaml` `tool_grants` | Agent (proposed, PR review) |
 | 2026-10-01 | Fixed orchestrator grant/policy mismatch; added `log_decision` to orchestrator tool_grants and `kill_switch` to policy allow.actions | Agent (PR review) |
+| 2026-10-01 | Reviewed both observations against `policy.yaml` evidence; both confirmed correct by design; opened one runtime follow-up on the shared `drift_detected` pattern name | Agent (PR review) |
