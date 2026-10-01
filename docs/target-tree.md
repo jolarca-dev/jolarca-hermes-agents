@@ -160,7 +160,8 @@ jolarca-hermes-agents/
 │   │   ├── README.md
 │   │   ├── TEMPLATE.md
 │   │   ├── HERMES-0001-...                # First ADR
-│   │   └── HERMES-0002-...                 # Evaluations + tool register
+│   │   ├── HERMES-0002-...                 # Evaluations + tool register
+│   │   └── HERMES-0003-...                 # Model sourcing + mission boundary
 │   └── threat-model.md                     # STRIDE analysis
 │
 ├── scripts/
@@ -272,3 +273,4 @@ Files are created in dependency order:
 | 2026-09-30 | Initial draft | Agent (pending review) |
 | 2026-09-30 | Status promoted to Accepted (all agents scaffolded, all files present) | Agent (accepted by solo operator) |
 | 2026-10-01 | Added `evaluations/`, `schemas/eval-case.schema.json`, `docs/tool-register.md`, `scripts/check_eval_coverage.py`, `tests/test_eval_cases.py`; corrected the workflows block to the single `ci.yml` job model | Agent (proposed, PR review) |
+| 2026-10-01 | Added `HERMES-0003-...` to the ADR list | Agent (pending operator acceptance on merge) |
