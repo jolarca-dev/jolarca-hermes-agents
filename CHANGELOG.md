@@ -5,6 +5,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed — 2026-10-01
+
+- `evaluations/functional/README.md` and `evaluations/regression/README.md`: explicit
+  populate preconditions, derivation rules, acceptance criteria, and the fact that
+  populating needs no CI change (both gates discover `evaluations/**/cases.yaml`)
+- `docs/tool-register.md`: both remaining observations reviewed against `policy.yaml`
+  evidence and confirmed correct by design; opened one runtime follow-up on the shared
+  `drift_detected` escalation pattern name declared by both audit and observability
+
+### Fixed — 2026-10-01
+
+- `evaluations/functional/README.md` contradicted `schemas/eval-case.schema.json` by
+  describing `control` as optional; the schema requires it on every case
+
 ### Added — 2026-10-01
 
 - `evaluations/` declarative adversarial suite: `prompt-injection` (C12), `privacy` (C11),
