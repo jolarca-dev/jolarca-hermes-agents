@@ -389,6 +389,7 @@ classes, each with the check that detects it:
 | ADR asserts an invariant no check enforces | grep the assertion's subject across `scripts/` and `tests/` |
 | Register totals, grant rows or tool index stop matching the fleet's `tool_grants` | `tests/test_tool_register_consistency.py` (automated) |
 | An agent grants a tool its own `policy.yaml` does not allow | `tests/test_tool_grant_policy_parity.py` (automated); note `allow.actions` is top-level in `policy.yaml`, not under `rules:` |
+| Two agents declare the same `escalation.patterns` token, or `escalation.action` is neither `block` nor `escalate` | `tests/test_escalation_pattern_uniqueness.py` (automated ratchet — a new collision fails, and retiring a listed one fails until the baseline entry is deleted) |
 | A check added only to `make lint` never reaches CI | `tests/test_lint_gate_scope.py` (automated); the `lint` job calls the tools directly, so mirror every Makefile command as a step |
 
 Report these as findings with evidence and a proposed remediation, in the
