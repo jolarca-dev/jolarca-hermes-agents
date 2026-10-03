@@ -7,6 +7,29 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed — 2026-10-03
 
+- `QODER.md` §7.10 corrected: it said secret scanning "**is enforced by** the CI
+  `secrets-scan` job." The job does run on every pull request and push and does fail on a
+  hit, but it is **not** one of the three required status checks. Verified against the live
+  API: `strict=true`, `contexts=lint,test,security`, `enforce_admins=true` — so a leaking PR
+  is marked red yet remains mergeable. The wording now states exactly that, and warns against
+  describing it as merge-blocking. `README.md` was already correct (it lists the three required
+  checks and files `secrets-scan` under supplementary), so only the contract file drifted.
+- Attempted promotion of `secrets-scan` to a required context, and found it cannot be done
+  from here; recorded rather than worked around. The required contexts are declared in
+  `jolarca-control/repos/jolarca-hermes-agents.yml`, but that Terraform root holds **no state**
+  (`terraform state list` exits 1: "Terraform has not yet made changes to your existing
+  configuration or state"), `make apply` is refused by design, `AGENTS.md` §5 forbids an agent
+  both `terraform apply` from that root and any `gh api -X PATCH` of branch protection, and §8
+  records that D-01/D-02/D-18/D-20/D-33 block the first apply and that no targeted-apply
+  mechanism exists. Two further defects surfaced while verifying: `branch-protection.tf`
+  lines 18-20 still assert `enable_branch_protection = false` while `terraform.tfvars:46` sets
+  it `true` (stale rationale in a high-blast-radius file), and the control file declares
+  `compliance.required_gates.secret_scan: true` while no server-side rule requires that check —
+  the "never describe a control as enforced when it is configured-but-inert" rule its own §6
+  states. Left as an operator decision; nothing in the sibling repo was modified.
+
+### Changed — 2026-10-03
+
 - Qualified the colliding `drift_detected` escalation pattern token **per emitter**: `audit`
   now declares `audit_log_drift_detected` and `observability` declares
   `model_eval_drift_detected`. This closes the runtime follow-up opened in
