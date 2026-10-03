@@ -86,6 +86,23 @@ def test_markdown_lint_is_supplementary_not_required():
     assert "markdown-lint" not in REQUIRED_CONTEXTS
 
 
+def test_no_run_step_in_this_job_swallows_its_exit_status():
+    """Repo-wide rule (test_ci_gates_are_real.py): no gate may be reduced to a no-op by OR-true.
+
+    Recorded because I violated it here myself. The version assert first failed on the runner --
+    `markdownlint-cli2 -v` prints its version then lints the literal "-v" as a pattern and exits
+    non-zero -- and my first fix swallowed that status with `|| true`. The existing guard caught
+    it and failed the required `test` job. The correct fix was to stop using `-v` and read the
+    installed versions from package metadata, so nothing needed swallowing at all.
+    """
+    offenders = [
+        step.get("name", "?")
+        for step in _job()["steps"]
+        if re.search(r"\|\|\s*(?:true|:)\s*(?:#.*)?$", str(step.get("run", "")), re.MULTILINE)
+    ]
+    assert not offenders, f"exit-status swallow inside the markdown-lint job: {offenders}"
+
+
 def test_md024_stays_enabled_at_default():
     """The duplicate headings were ours, so the changelog was consolidated rather than the rule."""
     cfg = json.loads((ROOT / ".markdownlint.json").read_text(encoding="utf-8"))

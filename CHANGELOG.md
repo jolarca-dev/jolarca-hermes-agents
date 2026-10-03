@@ -179,8 +179,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   (dev-only; nothing here is installed at build time). Measured on that lock: 81 packages, **80 of 80
   non-root entries carry a sha512 integrity hash**, and **zero declare install scripts** -- which is
   why `npm ci --ignore-scripts` skips nothing legitimate while guaranteeing no dependency lifecycle
-  code executes in the runner. The job then asserts the tool's own reported string equals
-  `markdownlint-cli2 v0.17.2 (markdownlint v0.37.4)` rather than trusting the lockfile was read.
+  code executes in the runner. The job then reads the **installed** versions from each package's own
+  `package.json` under `node_modules` and fails on any mismatch against
+  `markdownlint-cli2 v0.17.2 (markdownlint v0.37.4)`. It deliberately does **not** shell out to
+  `markdownlint-cli2 -v`: that binary prints its version and then treats `-v` as a file pattern, so it
+  exits non-zero, and my first attempt to work around that used an OR-true swallow -- which
+  `tests/test_ci_gates_are_real.py` correctly rejects, failing the required `test` job. The rule was
+  right and the workaround was dropped; the job now has nothing to swallow. A local guard in
+  `tests/test_markdown_lint_gate.py` polices the same rule inside this job so it cannot come back.
   Node is pinned to major `20` via SHA-pinned `actions/setup-node`; the residual float inside 20.x is
   accepted because Node does not decide the verdict. `package-lock.json` is a generated file added to
   a repository with no runtime dependencies -- worth flagging for review on exactly that basis.

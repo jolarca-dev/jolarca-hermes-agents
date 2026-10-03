@@ -293,19 +293,22 @@ jobs:
           PINNED_MARKDOWNLINT: "0.37.4"
         run: |
           set -euo pipefail
-          # Three traps, all hit on the first runner attempt:
-          #   * markdownlint-cli2 prints its version for -v and then treats "-v" as a file
-          #     pattern, so it exits non-zero. `|| true` is required -- the exact-string
-          #     comparison below is the gate, not the exit code, so a crash still fails.
-          #   * `set -o pipefail` makes `| head -1` abort the step: head exits early and the
-          #     writer dies of SIGPIPE.
-          #   * under `set -e` the substitution aborts before anything is printed, so the log
-          #     shows no diagnosis at all.
-          out="$(./node_modules/.bin/markdownlint-cli2 -v 2>&1 || true)"
-          out="${out%%$'\n'*}"
-          echo "resolved: $out"
-          if [[ "$out" != "markdownlint-cli2 v${PINNED_CLI} (markdownlint v${PINNED_MARKDOWNLINT})" ]]; then
-            echo "::error::tool version drifted from package-lock.json: $out"
+          # Read what npm actually installed, from each package's own metadata.
+          # Deliberately NOT `markdownlint-cli2 -v`: that binary prints its version and then
+          # treats "-v" as a file pattern, so it exits non-zero. The obvious workaround, an
+          # exit-status swallow, is banned in this repository by
+          # tests/test_ci_gates_are_real.py -- correctly, so the workaround was dropped rather
+          # than the rule argued with. If a package is absent, node exits non-zero and this step
+          # fails for the right reason, with no swallowed status.
+          cli="$(node -p "require('./node_modules/markdownlint-cli2/package.json').version")"
+          mdl="$(node -p "require('./node_modules/markdownlint/package.json').version")"
+          echo "resolved: markdownlint-cli2 v${cli} (markdownlint v${mdl})"
+          if [[ "${cli}" != "${PINNED_CLI}" ]]; then
+            echo "::error::markdownlint-cli2 is ${cli}, lockfile pins ${PINNED_CLI}"
+            exit 1
+          fi
+          if [[ "${mdl}" != "${PINNED_MARKDOWNLINT}" ]]; then
+            echo "::error::markdownlint is ${mdl}, lockfile pins ${PINNED_MARKDOWNLINT}"
             exit 1
           fi
 
