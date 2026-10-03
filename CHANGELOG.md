@@ -5,6 +5,25 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed — 2026-10-03
+
+- Qualified the colliding `drift_detected` escalation pattern token **per emitter**: `audit`
+  now declares `audit_log_drift_detected` and `observability` declares
+  `model_eval_drift_detected`. This closes the runtime follow-up opened in
+  `docs/tool-register.md` on 2026-10-01, which PR #30's ratchet was built to force shut.
+  Renaming was checked before doing it: `git grep drift_detected` matched only the two
+  `policy.yaml` files plus prose — no script, test or eval case consumed the token — and the
+  new names follow the vocabulary already sitting beside them in the same files
+  (`audit_log_tampering_attempt`, `error_rate_spike`, `cost_ceiling_approached`). The shared
+  `detect_drift` **tool** is deliberately unchanged and remains correct by design (same verb,
+  different sinks); only the alert *name* collided.
+- `tests/test_escalation_pattern_uniqueness.py` tightened from a ratchet to **zero
+  tolerance**. `KNOWN_COLLISIONS` is now empty and `test_debt_register_stays_empty` forbids
+  adding entries. A non-empty whitelist leaves a loophole that only mattered while debt
+  existed: register a new collision and both the "no new collision" and "no stale entry"
+  tests pass. With the debt paid, any collision a two-agent share now fails CI outright, and
+  granting an exception has to be an explicit decision rather than a line in a register.
+
 ### Added — 2026-10-03
 
 - `tests/test_escalation_pattern_uniqueness.py`: a **ratchet** guard on escalation pattern

@@ -18,7 +18,7 @@ deny:
 
 escalation:
   patterns:
-    - "drift_detected"
+    - "model_eval_drift_detected"
     - "cost_ceiling_approached"
     - "error_rate_spike"
   action: escalate

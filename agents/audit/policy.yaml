@@ -18,7 +18,7 @@ deny:
 
 escalation:
   patterns:
-    - "drift_detected"
+    - "audit_log_drift_detected"
     - "audit_log_tampering_attempt"
   action: escalate
 
