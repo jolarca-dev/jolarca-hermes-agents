@@ -5,6 +5,25 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed — 2026-10-04
+
+- `QODER.md` Revision History: the row added for PR #32 was missing its third cell. The table
+  is `| Date | Change | Authority |`, but that row ended immediately after the change text, so
+  the attribution was silently absent. Introduced by the script that appended the row, not by
+  hand.
+
+  Found only by `markdownlint-cli2` (`MD056/table-column-count`) while measuring the docs ahead
+  of binding a markdown lint gate — which is the point worth recording: nothing in `make check`,
+  `ruff check`, `ruff format --check`, the deny-pattern scan or the 149 tests can observe a
+  malformed markdown table. A governance document can lose an attribution row and every
+  existing gate stays green.
+
+  Manual one-line fix, verified with the real linter: all nine revision rows now carry three
+  cells, and the repo-wide count drops 87 → 86 with MD056 gone. The 15 `MD024` duplicates in
+  this file's own `[Unreleased]` block remain pending the two-step markdown work; they are
+  partly the Keep a Changelog format (different parents) and partly duplicate
+  `### Added — 2026-10-03` headings this workstream created by stacking PRs.
+
 ### Changed — 2026-10-03
 
 - `QODER.md` §7.10 corrected: it said secret scanning "**is enforced by** the CI
