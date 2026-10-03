@@ -10,8 +10,8 @@
 | ADR | Title | Status | Date |
 |---|---|---|---|
 | [HERMES-0001](HERMES-0001-agent-architecture.md) | Agent Architecture — Identity Tags, Build Order, and Gate Types | Accepted | 2026-09-30 |
-| [HERMES-0002](HERMES-0002-evaluations-and-tool-register.md) | Adversarial Evaluations and Consolidated Tool Register | Proposed | 2026-10-01 |
-| [HERMES-0003](HERMES-0003-model-sourcing-and-mission-boundary.md) | Model Sourcing, Self-Hosted Inference, and the Mission Boundary | Proposed | 2026-10-01 |
+| [HERMES-0002](HERMES-0002-evaluations-and-tool-register.md) | Adversarial Evaluations and Consolidated Tool Register | Accepted | 2026-10-01 |
+| [HERMES-0003](HERMES-0003-model-sourcing-and-mission-boundary.md) | Model Sourcing, Self-Hosted Inference, and the Mission Boundary | Accepted | 2026-10-01 |
 
 ---
 
@@ -32,3 +32,4 @@
 |---|---|---|
 | 2026-10-01 | Initial ADR index | Agent (accepted by solo operator) |
 | 2026-10-01 | Added HERMES-0002 (index drift fix) and HERMES-0003 | Agent (pending operator acceptance on merge) |
+| 2026-10-03 | HERMES-0002 and HERMES-0003 accepted; index statuses updated. All three Hermes ADRs are now Accepted | Agent (accepted on operator instruction) |

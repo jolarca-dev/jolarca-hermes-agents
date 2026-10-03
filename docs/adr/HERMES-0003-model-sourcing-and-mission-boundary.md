@@ -1,6 +1,6 @@
 # HERMES-0003: Model Sourcing, Self-Hosted Inference, and the Mission Boundary
 
-**Status:** Proposed
+**Status:** Accepted
 **Date:** 2026-10-01
 **Deciders:** jolarca-dev (solo operator)
 
@@ -145,3 +145,4 @@ any agent calls it:
 |---|---|---|
 | 2026-10-01 | Initial ADR (proposed) | Agent (pending operator acceptance on merge) |
 | 2026-10-03 | §4 corrected to name `vendor-risk-check` as the enforcement locus for the null-provider invariant. When this ADR was written, `check_vendor_risk.py` existed and passed locally but was invoked by no CI job, so the assertion it describes was not actually enforced; that job is now wired | Agent (proposed, pending operator acceptance) |
+| 2026-10-03 | Status **Proposed → Accepted**. In-repo claims re-verified first: `model_policy.provider` is `null` for 12/12 agents, `vendor-risk-check` exists and runs `scripts/check_vendor_risk.py`, and `deny-pattern-scan` fails CI on a mission-platform token. C13 **remains open by design** — accepting this ADR does not close it, and no provider was registered | Agent (accepted on operator instruction) |
