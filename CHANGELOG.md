@@ -67,6 +67,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   the document's Revision History. PR #21 introduced the file without reconciling this
   `Status: Accepted` tree at the same time, so the documented structure no longer matched
   `git ls-files` — the blueprint-vs-as-built drift this document exists to prevent.
+- `docs/target-tree.md`: reconciled the Fleet-Standard Files table in the same `Status:
+  Accepted` document. All ten rows read `Missing` while all ten files are tracked and
+  present on disk, which also contradicted the document's own 2026-09-30 Revision History
+  row stating "all files present". This is the opposite direction of the same defect: an
+  accepted spec claiming absent files that exist is as much an audit-accuracy error as
+  omitting files that exist. Statuses now read `Present`, and `.markdownlint.json` and
+  `.pre-commit-config.yaml` are labelled config-only — nothing runs markdownlint, and the
+  hooks are not installed — so the table no longer implies enforcement that does not exist.
 
 ### Added — 2026-10-01
 
