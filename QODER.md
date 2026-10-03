@@ -142,7 +142,7 @@ Re-verify before relying on this; it ages.
 | Controls | 17 (C1-C17) in `docs/control-matrix.md` |
 | Schemas | 4, JSON Schema Draft 2020-12, `additionalProperties: false` |
 | Enforcement scripts | 17 under `scripts/` (16 `check_*.py` + `validate_agents.py`) |
-| CI jobs | 14: `lint`, `test`, `security` (required) + 11 supplementary |
+| CI jobs | 15: `lint`, `test`, `security` (required) + 12 supplementary |
 
 ### 7.2 Commands
 
@@ -258,11 +258,14 @@ the dead helper as a drive-by; raise it (§7.12).
   if you add an exclusion or a deny entry, prove the check fires without it.
   Note `tests/` is deny-scan exempt, so a scanner test must write its fixture
   outside the exempt directories and with a non-exempt extension.
-- Two suites guard CI integrity itself rather than agent content:
+- Three suites guard CI integrity itself rather than agent content:
   `tests/test_ci_control_wiring.py` (every `check_*.py` is invoked; every cited
-  job is defined) and `tests/test_ci_gates_are_real.py` (no swallowed exit
-  status, no `continue-on-error`). Edit `ci.yml` and these are the first
-  failures to expect — they are the fix for the drift, not a nuisance.
+  job is defined), `tests/test_ci_gates_are_real.py` (no swallowed exit status,
+  no `continue-on-error`), and `tests/test_ci_hardening.py` (actions pinned to
+  full commit SHAs with version comments, workflows declare least-privilege
+  `permissions`, the secret scanner is wired and licence-free). Edit `ci.yml`
+  and these are the first failures to expect — they are the fix for the drift,
+  not a nuisance.
 
 ### 7.8 Documentation conventions
 
@@ -319,9 +322,16 @@ the dead helper as a drive-by; raise it (§7.12).
   files, or Terraform state (`*.tfstate`, `*.tfstate.*`) — see `SECURITY.md`.
 - `.pre-commit-config.yaml` declares gitleaks, `detect-private-key`,
   `check-yaml`, `check-merge-conflict`, `check-added-large-files`,
-  `trailing-whitespace`, `end-of-file-fixer`, and ruff. It is **config only**:
-  the hooks are not installed in this clone, and CI runs no secret-scanning job.
-  Do not claim secrets are gated locally until `pre-commit install` has run.
+  `trailing-whitespace`, `end-of-file-fixer`, and ruff. Those hooks are **config
+  only** and are not installed in this clone, so they gate nothing locally.
+  Secret scanning is enforced by the CI `secrets-scan` job, which runs the
+  checksum-verified gitleaks CLI over the full history. Do not substitute
+  `gitleaks-action`: it requires a `GITLEAKS_LICENSE` secret for
+  organisation-owned repositories and fails on every run.
+- Beware the `trailing-whitespace` hook before installing it. Governance docs
+  end their `**Status:**` / `**Date:**` header lines with two spaces, a
+  deliberate markdown hard line break; installing the hooks strips it and
+  silently restyles every such header.
 - Never suggest `--no-verify`, an unsigned commit, or bypassing a hook.
 - This is a **public** repository. Assume every line is read by a customer, a
   competitor, and an auditor. No infrastructure identifiers, hostnames, IP
@@ -366,6 +376,8 @@ classes, each with the check that detects it:
 | Matrix cites a CI job that `ci.yml` does not define | `tests/test_ci_control_wiring.py` (automated); or diff job names in `docs/control-matrix.md` against `jobs:` in `ci.yml` |
 | Enforcement script exists, passes, but no job runs it | `tests/test_ci_control_wiring.py` (automated); or grep each `scripts/check_*.py` basename in `ci.yml` |
 | A required check cannot fail (swallowed exit status, `continue-on-error`) | `tests/test_ci_gates_are_real.py` (automated); or read each `run:` step for a swallow |
+| Action ref on a mutable tag, or pinned to an abbreviated / annotated-tag SHA | `tests/test_ci_hardening.py` (automated); resolve the tag to a commit with `gh api repos/<a>/commits/<tag> --jq .sha` before pinning |
+| Workflow declares no `permissions:` block | `tests/test_ci_hardening.py` (automated) |
 | Job runs a different script than the matrix claims | read the job's `run:` step, not its name |
 | Docstring or prose overclaims what a script checks | read the script body |
 | Blueprint doc diverges from the as-built tree | diff `docs/target-tree.md` against `git ls-files` |
@@ -407,3 +419,4 @@ or silently ignored.
 |---|---|---|
 | 2026-10-03 | Initial behavioural contract for AI-assisted changes | Agent (proposed, pending operator acceptance) |
 | 2026-10-03 | Rebased onto merged `main` after PR #19 (eight controls wired) and PR #20 (`security` gate made binding): §7.9 open item resolved, §5 and §7.12 extended to cover gates that cannot fail, §7.11 records the squash-merge convention and the CHANGELOG conflict trap | Agent (proposed, pending operator acceptance) |
+| 2026-10-03 | Updated for the CI-hardening change: job count 14 → 15 with a `secrets-scan` job, §7.10 no longer claims secret scanning is absent (and warns on the `trailing-whitespace` / hard-break conflict), §7.7 names the third guard suite, §7.12 gains unpinned-action and missing-permissions rows | Agent (proposed, PR review) |
