@@ -24,6 +24,47 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added — 2026-10-03
 
+- `.github/workflows/ci.yml`: a `secrets-scan` job running the gitleaks CLI over the **full
+  git history** (`fetch-depth: 0`, `--log-opts="--all"`). Before this, nothing executed
+  gitleaks anywhere: `.pre-commit-config.yaml` declared the hook but the hooks have never
+  been installed (`.git/hooks` holds no non-sample files) and no CI job invoked it, so the
+  control `SECURITY.md` asserts was folklore under ADR-0004 R3 — corroborated by
+  `.gitleaksignore`, which still read "No known false positives yet" because the scanner
+  had never produced any output. It installs a checksum-verified release binary rather than
+  `gitleaks/gitleaks-action`, which requires a `GITLEAKS_LICENSE` secret for
+  organisation-owned repositories and fails on every run (fleet finding F-01 in
+  `jolarca-security`). Measured before wiring: gitleaks 8.30.1 scanned the working tree and
+  all 23 commits and reported **no leaks**, exit 0. The job is **supplementary** rather
+  than folded into the required `security` context because the sha256 it pins is inherited
+  from a `jolarca-security` workflow whose only recorded run failed on 2026-09-26 and has
+  never executed since the fix, so this job is the digest's first real verification; a wrong
+  digest then surfaces as one red job with a one-line correction instead of a merge outage.
+  Promoting it to a required check is a separate decision — required contexts are
+  Terraform-managed in `jolarca-control`.
+- `tests/test_ci_hardening.py`: guards that every action reference is pinned to a full
+  40-character commit SHA carrying a version comment, that each workflow declares
+  least-privilege `permissions`, and that the secret scanner is wired, licence-free,
+  checksum-verified and history-scanning — plus a non-vacuity test on the reference parser.
+  Written first and observed failing on all four live defects.
+
+### Changed — 2026-10-03
+
+- `.github/workflows/ci.yml`: every action reference moved from a mutable major version tag
+  to a full commit SHA annotated with its resolved version, so an upstream tag retarget
+  cannot silently change what the pipeline executes. `actions/checkout` advances v4 to v7
+  and `actions/setup-python` v5 to v7, superseding dependabot PRs #4 and #5, which proposed
+  those same versions and were green. Both refs were resolved to commit SHAs before
+  pinning: `gitleaks`-style tags can point at an annotated tag *object*, and GitHub Actions
+  rejects both that and abbreviated SHAs.
+- `.github/workflows/ci.yml`: added a workflow-level `permissions: { contents: read }`
+  block. No workflow previously declared one, leaving `GITHUB_TOKEN` scoped by the
+  organisation default rather than a stated ceiling.
+- `QODER.md` and `README.md`: job count 14 to 15, and §7.10 no longer claims CI runs no
+  secret-scanning job. §7.10 now also warns that the `trailing-whitespace` hook conflicts
+  with the deliberate two-space markdown hard breaks used by governance doc header blocks.
+
+### Added — 2026-10-03
+
 - `QODER.md`: behavioural contract for AI-assisted changes in this repository. Sections
   1-6 carry the four general anti-hallucination principles plus two that this repository's
   own doctrine demands — "enforced, not documented" (ADR-0004 R3) and dual-state honesty —
@@ -77,6 +118,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   correction rather than silently rewriting the claim.
 - `README.md`: supplementary control job list and the `ci.yml` structure comment updated
   from 9 jobs to 11.
+
+### Fixed — 2026-10-03
+
+- `docs/target-tree.md`: added `QODER.md` to the root file list and recorded the change in
+  the document's Revision History. PR #21 introduced the file without reconciling this
+  `Status: Accepted` tree at the same time, so the documented structure no longer matched
+  `git ls-files` — the blueprint-vs-as-built drift this document exists to prevent.
+- `docs/target-tree.md`: reconciled the Fleet-Standard Files table in the same `Status:
+  Accepted` document. All ten rows read `Missing` while all ten files are tracked and
+  present on disk, which also contradicted the document's own 2026-09-30 Revision History
+  row stating "all files present". This is the opposite direction of the same defect: an
+  accepted spec claiming absent files that exist is as much an audit-accuracy error as
+  omitting files that exist. Statuses now read `Present`, and `.markdownlint.json` and
+  `.pre-commit-config.yaml` are labelled config-only — nothing runs markdownlint, and the
+  hooks are not installed — so the table no longer implies enforcement that does not exist.
 
 ### Added — 2026-10-01
 
