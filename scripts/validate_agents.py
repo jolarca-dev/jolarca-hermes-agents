@@ -59,10 +59,7 @@ def validate_agent(agent_dir: Path) -> list[str]:
     # Identity tag format
     tag = agent.get("identity_tag", "")
     if not IDENTITY_TAG_RE.match(tag):
-        errors.append(
-            f"{name}: identity_tag '{tag}' does not match "
-            f"agent:jolarca:<module-id> pattern"
-        )
+        errors.append(f"{name}: identity_tag '{tag}' does not match agent:jolarca:<module-id> pattern")
 
     # policy.yaml
     policy_file = agent_dir / "policy.yaml"
@@ -111,10 +108,7 @@ def main() -> int:
                 data = yaml.safe_load(f)
             tag = data.get("identity_tag", "")
             if tag in seen_tags:
-                all_errors.append(
-                    f"{agent_dir.name}: duplicate identity_tag '{tag}' "
-                    f"(also used by {seen_tags[tag]})"
-                )
+                all_errors.append(f"{agent_dir.name}: duplicate identity_tag '{tag}' (also used by {seen_tags[tag]})")
             seen_tags[tag] = agent_dir.name
 
     if all_errors:

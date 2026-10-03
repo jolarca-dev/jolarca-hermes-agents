@@ -16,9 +16,7 @@ def test_deny_patterns_passes_on_clean_repo():
         text=True,
         cwd=REPO_ROOT,
     )
-    assert result.returncode == 0, (
-        f"check_deny_patterns.py failed:\n{result.stdout}\n{result.stderr}"
-    )
+    assert result.returncode == 0, f"check_deny_patterns.py failed:\n{result.stdout}\n{result.stderr}"
 
 
 def test_deny_patterns_catches_jol_prefix():

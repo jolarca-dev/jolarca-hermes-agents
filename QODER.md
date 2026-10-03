@@ -136,7 +136,7 @@ Re-verify before relying on this; it ages.
 | Python | 3.12 (`.venv/bin/python`), `requires-python >=3.12` |
 | Runtime deps | none declared; scripts import `pyyaml` only |
 | Test deps | `pytest`, `pyyaml`, `jsonschema` |
-| Lint | `ruff`, line-length 120, rules `E,F,W,I,UP,B,SIM` |
+| Lint | `ruff check` + `ruff format --check`, line-length 120, rules `E,F,W,I,UP,B,SIM` |
 | Type checking | `make typecheck` is a stub — no typed code yet |
 | Agents | 12, across layers 0-6 |
 | Controls | 17 (C1-C17) in `docs/control-matrix.md` |
@@ -147,8 +147,9 @@ Re-verify before relying on this; it ages.
 ### 7.2 Commands
 
 ```bash
-make check          # lint + validate + deny-patterns (what CI's lint job runs)
-make lint           # ruff check .
+make check          # lint + validate + deny-patterns (the CI lint job runs these
+                    # as separate steps; it does NOT invoke make)
+make lint           # ruff check . + ruff format --check .
 make test           # pytest tests/ agents/ -v
 make validate       # validate_agents.py + JSON Schema well-formedness
 make evals          # check_eval_coverage.py (C8-C12 fixtures)
@@ -387,6 +388,7 @@ classes, each with the check that detects it:
 | Blueprint doc diverges from the as-built tree | diff `docs/target-tree.md` against `git ls-files` |
 | ADR asserts an invariant no check enforces | grep the assertion's subject across `scripts/` and `tests/` |
 | Register totals, grant rows or tool index stop matching the fleet's `tool_grants` | `tests/test_tool_register_consistency.py` (automated) |
+| A check added only to `make lint` never reaches CI | `tests/test_lint_gate_scope.py` (automated); the `lint` job calls the tools directly, so mirror every Makefile command as a step |
 
 Report these as findings with evidence and a proposed remediation, in the
 response or as an issue — not as an unrequested drive-by commit, and not as a
@@ -427,3 +429,4 @@ or silently ignored.
 | 2026-10-03 | Updated for the CI-hardening change: job count 14 → 15 with a `secrets-scan` job, §7.10 no longer claims secret scanning is absent (and warns on the `trailing-whitespace` / hard-break conflict), §7.7 names the third guard suite, §7.12 gains unpinned-action and missing-permissions rows | Agent (proposed, PR review) |
 | 2026-10-03 | §7.12 gains a tool-register consistency row and §7.7 names `tests/test_tool_register_consistency.py`, added after `docs/tool-register.md`'s totals sentence was found to contradict its own Tool index (39 claimed, 38 listed) | Agent (proposed, PR review) |
 | 2026-10-03 | Status **Proposed → Accepted**. Every factual figure re-verified against the tree first: 12 agents, 17 controls, 4 schemas, 17 scripts, 15 CI jobs with `lint`/`test`/`security` still the only required contexts, `provider` null for 12/12, and `make check` confirmed to exclude tests. Nothing in §7 was found stale at the moment of acceptance | Agent (accepted on operator instruction) |
+| 2026-10-03 | §7.1 and §7.2 corrected after the Makefile's "CI job `lint` runs `make check`" comment was found to be false — the job invokes the tools directly, which is why a gate added only to the Makefile would not bind. §7.12 gains that drift row; formatting is now enforced in both places | Agent (proposed, PR review) |
