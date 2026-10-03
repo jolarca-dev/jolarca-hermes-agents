@@ -80,7 +80,7 @@ classifications:
 
 Data can be promoted to a higher classification only through a human gate:
 
-```
+```text
 restricted → [consent redaction] → confidential
 confidential → [editorial approval] → public
 internal → [editorial approval] → public

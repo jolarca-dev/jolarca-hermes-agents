@@ -22,7 +22,8 @@
 - **Naming:** `HERMES-NNNN-short-title.md` (lowercase, hyphen-separated).
 - **Status lifecycle:** `Proposed` → `Accepted` → `Deprecated` (or `Superseded by HERMES-XXXX`).
 - **Template:** Use [TEMPLATE.md](TEMPLATE.md) for new ADRs.
-- **Authority:** In the solo-operator era, the operator is the accepting authority. When teams are created, update the authority field per ADR.
+- **Authority:** In the solo-operator era, the operator is the accepting authority. When teams are created, update the
+  authority field per ADR.
 
 ---
 

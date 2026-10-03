@@ -60,4 +60,5 @@ What changes prevent recurrence? (e.g., new eval case in `evaluations/`, policy 
 
 ---
 
-**Note:** This incident will be recorded in the audit log (C17) and may trigger a regression eval case in `evaluations/regression/` to prevent recurrence.
+**Note:** This incident will be recorded in the audit log (C17) and may trigger a regression eval case in
+`evaluations/regression/` to prevent recurrence.

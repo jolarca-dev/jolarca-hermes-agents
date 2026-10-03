@@ -22,7 +22,7 @@ GDPR controls. The architecture needed to answer:
 
 Every agent declares a unique identity tag in `agent.yaml` following the pattern:
 
-```
+```text
 agent:jolarca:<module-id>
 ```
 
@@ -55,7 +55,7 @@ agent:jolarca:<module-id>
 Agents are built in dependency order. An agent must not be built before its
 dependencies exist.
 
-```
+```text
 Layer 0 (foundation):
   orchestrator, audit (cross-cutting), observability (cross-cutting)
 
