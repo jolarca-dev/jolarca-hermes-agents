@@ -27,6 +27,7 @@ agent:jolarca:<module-id>
 ```
 
 **Rules:**
+
 - Tags are lowercase, hyphen-separated, matching the module id
 - Tags are never reused or reassigned
 - Every agent must declare its tag; untagged agents are rejected by CI
@@ -81,6 +82,7 @@ Layer 6 (composition):
 ```
 
 Parallelizable within layers:
+
 - Layer 2: consent and rag
 - Layer 4: translation, seo, accessibility
 
@@ -103,15 +105,18 @@ these gates map to team-based approval workflows.
 ## Consequences
 
 ### Positive
+
 - Unique identity tags enable fleet-wide audit correlation
 - Layered build order prevents circular dependencies
 - Gate types provide clear compliance semantics
 
 ### Negative
+
 - Identity tags add YAML boilerplate to every agent
 - Layered build order means early layers must be stable before later layers begin
 
 ### Risks
+
 - Tag reuse could cause audit log confusion — mitigated by uniqueness enforcement in CI
 - Gate bypass could violate compliance — mitigated by policy deny rules and CI checks
 

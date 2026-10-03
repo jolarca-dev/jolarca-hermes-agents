@@ -31,6 +31,7 @@ For every content piece:
 ## Structured Data
 
 Generate Schema.org markup appropriate to the content type:
+
 - Article, BlogPosting for articles
 - Product for product pages
 - FAQPage for FAQ content

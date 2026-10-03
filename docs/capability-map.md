@@ -68,6 +68,7 @@ Cross-cutting (span all layers, ship alongside orchestrator):
 ```
 
 **Parallelizable within layers:**
+
 - Layer 2: `consent` and `rag` can be built in parallel
 - Layer 4: `translation`, `seo`, `accessibility` can be built in parallel
 - Cross-cutting: `audit` and `observability` can be built alongside any layer
@@ -79,12 +80,14 @@ Cross-cutting (span all layers, ship alongside orchestrator):
 All identity tags follow the pattern `agent:jolarca:<module-id>`.
 
 **Rules:**
+
 1. Tags are lowercase, hyphen-separated, matching the module id
 2. Tags are never reused or reassigned (consistent with ADR prefix rules)
 3. Every agent must declare its tag in `agent.yaml`; policy enforcement rejects untagged agents
 4. Tags are used in audit logs, policy files, and CI enforcement
 
 **Allocated tags:**
+
 - `agent:jolarca:orchestrator`
 - `agent:jolarca:guardrails`
 - `agent:jolarca:rag`

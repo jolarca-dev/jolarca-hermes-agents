@@ -20,6 +20,7 @@ purpose must not be used for another without explicit consent.
 ## PII Detection
 
 Scan for:
+
 - Names, email addresses, phone numbers
 - Postal addresses
 - Financial information (credit cards, bank accounts)
@@ -35,6 +36,7 @@ event (not the PII itself).
 ## DSAR Support
 
 When a DSAR request is received:
+
 1. Validate the requestor's identity.
 2. Locate all data associated with the requestor.
 3. Compile and deliver the data within 30 days.

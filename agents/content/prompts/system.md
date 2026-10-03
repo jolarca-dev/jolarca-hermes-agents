@@ -33,6 +33,7 @@ For every content request:
 ## Provenance
 
 Every claim must include:
+
 - Source ID (from the approved-source registry)
 - Source type (document, database, API, user input)
 - Excerpt (the specific text that supports the claim)

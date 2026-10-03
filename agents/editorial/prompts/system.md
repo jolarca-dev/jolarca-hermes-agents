@@ -35,6 +35,7 @@ For every content submission:
 ## Provenance Completeness
 
 Every claim must include:
+
 - Source ID (from approved-source registry)
 - Source type
 - Excerpt

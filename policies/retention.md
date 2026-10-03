@@ -30,6 +30,7 @@ Hermes agent fleet. Retention periods are driven by compliance requirements
 ## GDPR Art. 17 (Right to Erasure)
 
 Personal data must be deleted when:
+
 - The purpose for which it was collected no longer applies
 - The data subject withdraws consent
 - The data subject exercises their right to erasure
@@ -46,6 +47,7 @@ The `consent` agent handles DSAR requests and enforces erasure within 30 days.
 ## Exceptions
 
 Retention may be extended when:
+
 - Legal hold is in place (litigation, investigation)
 - Regulatory requirement demands longer retention
 - Business justification is recorded and approved
