@@ -259,14 +259,18 @@ the dead helper as a drive-by; raise it (§7.12).
   if you add an exclusion or a deny entry, prove the check fires without it.
   Note `tests/` is deny-scan exempt, so a scanner test must write its fixture
   outside the exempt directories and with a non-exempt extension.
-- Three suites guard CI integrity itself rather than agent content:
+- Four suites guard CI integrity itself rather than agent content:
   `tests/test_ci_control_wiring.py` (every `check_*.py` is invoked; every cited
   job is defined), `tests/test_ci_gates_are_real.py` (no swallowed exit status,
-  no `continue-on-error`), and `tests/test_ci_hardening.py` (actions pinned to
+  no `continue-on-error`), `tests/test_ci_hardening.py` (actions pinned to
   full commit SHAs with version comments, workflows declare least-privilege
-  `permissions`, the secret scanner is wired and licence-free). Edit `ci.yml`
-  and these are the first failures to expect — they are the fix for the drift,
-  not a nuisance.
+  `permissions`, the secret scanner is wired and licence-free), and
+  `tests/test_markdown_lint_gate.py` (the `markdown-lint` job installs from the lockfile with
+  `--ignore-scripts`, asserts the resolved tool version, and contains no exit-status swallow).
+  `tests/test_dependabot_coverage.py` guards the monitoring around those pins: every dependency
+  manifest in the tree must have a dependabot ecosystem, and no ecosystem may point at a directory
+  holding no such manifest. Edit `ci.yml`, the npm lockfile or `.github/dependabot.yml` and these
+  are the first failures to expect — they are the fix for the drift, not a nuisance.
 - `tests/test_tool_register_consistency.py` re-derives `docs/tool-register.md` from the
   twelve `agent.yaml` files: the stated totals, each agent's grant row, the tool-index set
   in both directions, and the enumerated shared tools must all match the fleet. Edit any
@@ -399,6 +403,7 @@ classes, each with the check that detects it:
 | An agent grants a tool its own `policy.yaml` does not allow | `tests/test_tool_grant_policy_parity.py` (automated); note `allow.actions` is top-level in `policy.yaml`, not under `rules:` |
 | Two agents declare the same `escalation.patterns` token, or `escalation.action` is neither `block` nor `escalate` | `tests/test_escalation_pattern_uniqueness.py` (automated ratchet — a new collision fails, and retiring a listed one fails until the baseline entry is deleted) |
 | A check added only to `make lint` never reaches CI | `tests/test_lint_gate_scope.py` (automated); the `lint` job calls the tools directly, so mirror every Makefile command as a step |
+| A dependency manifest exists with no dependabot ecosystem monitoring it, or an ecosystem points at a directory holding no such manifest | `tests/test_dependabot_coverage.py` (automated) |
 
 Report these as findings with evidence and a proposed remediation, in the
 response or as an issue — not as an unrequested drive-by commit, and not as a
@@ -441,4 +446,5 @@ or silently ignored.
 | 2026-10-03 | Status **Proposed → Accepted**. Every factual figure re-verified against the tree first: 12 agents, 17 controls, 4 schemas, 17 scripts, 15 CI jobs with `lint`/`test`/`security` still the only required contexts, `provider` null for 12/12, and `make check` confirmed to exclude tests. Nothing in §7 was found stale at the moment of acceptance | Agent (accepted on operator instruction) |
 | 2026-10-03 | §7.1 and §7.2 corrected after the Makefile's "CI job `lint` runs `make check`" comment was found to be false — the job invokes the tools directly, which is why a gate added only to the Makefile would not bind. §7.12 gains that drift row; formatting is now enforced in both places | Agent (proposed, PR review) |
 | 2026-10-03 | §7.10 wording corrected after measuring live branch protection: `secrets-scan` **runs** on every PR and push but is **not** a required context, so it cannot block a merge — the earlier "is enforced by" overstated it. Recorded that promotion is not possible from this repo (the control-plane Terraform root holds no state; `AGENTS.md` §5 forbids an agent apply and out-of-band PATCH of branch protection). `README.md` was already accurate. | Agent (proposed, PR review) |
-| 2026-10-04 | §7.6 changelog convention changed to one **undated** heading per category, because the dated form was the root cause of the 15 MD024 findings; markdownlint is now enforced by the supplementary CI `markdown-lint` job, so §7.6 no longer calls it a convention | Agent (proposed, PR review) |
+| 2026-10-04 | §7.8 changelog convention changed to one **undated** heading per category, because the dated form was the root cause of the 15 MD024 findings; markdownlint is now enforced by the supplementary CI `markdown-lint` job, so §7.8 no longer calls it a convention | Agent (proposed, PR review) |
+| 2026-10-04 | §7.7 names the fourth CI-integrity suite and `tests/test_dependabot_coverage.py`; §7.12 gains the unmonitored-manifest drift row; §7.6 citations in the previous row were wrong -- the changelog and markdownlint conventions live in §7.8, §7.6 is validation loci | Agent (proposed, PR review) |

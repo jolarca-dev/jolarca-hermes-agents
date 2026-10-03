@@ -234,7 +234,7 @@ statuses below were reconciled against `git ls-files` on 2026-10-03.
 | `Makefile` | Present | Targets: lint, test, validate, check, evals, deny-patterns |
 | `pyproject.toml` | Present | Ruff, pytest and mypy config; no runtime dependencies |
 | `qodana.yaml` | Present | Code quality config |
-| `.github/dependabot.yml` | Present | github-actions and pip ecosystems, weekly |
+| `.github/dependabot.yml` | Present | github-actions, pip and npm ecosystems, weekly; manifest/ecosystem parity held by `tests/test_dependabot_coverage.py` |
 
 ---
 
@@ -282,3 +282,4 @@ Files are created in dependency order:
 | 2026-10-03 | Added `QODER.md` to the root file list — it was introduced by PR #21 without reconciling this Accepted tree at the same time | Agent (proposed, PR review) |
 | 2026-10-03 | Reconciled the Fleet-Standard Files table: all ten rows said `Missing` while all ten files were tracked and present, contradicting this document's own 2026-09-30 row ("all files present"). Statuses now read `Present`, and the two config-only files say so plainly rather than implying enforcement | Agent (proposed, PR review) |
 | 2026-10-04 | Added `package.json` and `package-lock.json` to the root file list; `.markdownlint.json` status changed from config-only to enforced by the CI `markdown-lint` job | Agent (accepted, PR review) |
+| 2026-10-04 | `.github/dependabot.yml` row updated: npm ecosystem registered for the root lockfile added with the markdownlint gate, parity held by `tests/test_dependabot_coverage.py` | Agent (accepted, PR review) |

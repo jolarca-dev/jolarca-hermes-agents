@@ -7,6 +7,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `.github/dependabot.yml`: an `npm` ecosystem for the root directory, so the
+  `package.json`/`package-lock.json` pair introduced by the markdownlint gate is actually monitored.
+  **This closed a gap I created myself**: PR #37 pinned markdownlint-cli2 and ~80 transitive packages
+  with integrity hashes while dependabot declared only `github-actions` and `pip`, leaving 81 packages
+  ageing with nothing watching them in a repo whose doctrine is that nothing may be pinned and left
+  unmonitored. Measured before fixing: ecosystems were exactly those two.
+
+  `tests/test_dependabot_coverage.py` holds the parity **bidirectionally** -- every manifest in the
+  tree needs an ecosystem, and no ecosystem may point at a directory holding no such manifest -- so
+  the gap cannot recur when a dependency is added later, and a removed manifest cannot leave a dead
+  entry behind. Also recorded here: repo-level `vulnerability-alerts` and `automated-security-fixes`
+  both answered the API's success status, so Dependabot security updates are possible here, not only
+  version bumps.
+
 - `tests/test_escalation_pattern_uniqueness.py`: a **ratchet** guard on escalation pattern
   tokens. Measured on main, the twelve agents declare 28 distinct `escalation.patterns`
   tokens and exactly one is shared: `drift_detected`, used by `audit` for evidence and
@@ -196,8 +210,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   consolidation above. The root cause was also still live in `QODER.md`, which instructed
   contributors to write dated `### Added — YYYY-MM-DD` subsections under `## [Unreleased]` -- i.e. the
   contract told every PR to regrow exactly what the new gate rejects. Binding MD024 without correcting
-  that instruction would have made the next compliant contributor fail CI, so §7.6 now mandates one
-  undated heading per category. `docs/target-tree.md` and `QODER.md` §7.6 both previously stated that
+  that instruction would have made the next compliant contributor fail CI, so §7.8 now mandates one
+  undated heading per category. `docs/target-tree.md` and `QODER.md` §7.8 both previously stated that
   **nothing runs markdownlint**; those claims are now false and were updated in the same change.
 
 - `CHANGELOG.md`: consolidated `## [Unreleased]` from **25 dated sub-headings into one heading per

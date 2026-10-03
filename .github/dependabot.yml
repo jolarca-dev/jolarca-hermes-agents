@@ -11,3 +11,15 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+
+  # Added with the markdownlint gate (PR #37): package.json/package-lock.json pin
+  # markdownlint-cli2 and ~80 transitive packages with integrity hashes, but nothing monitored
+  # them. A pin without monitoring is how a "no unpinned tools" rule ends up with a stale pin
+  # that still reads compliant. `tests/test_dependabot_coverage.py` holds the parity.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: chore(deps-dev)
