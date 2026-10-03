@@ -1,6 +1,6 @@
 # QODER.md
 
-**Status:** Proposed
+**Status:** Accepted
 **Date:** 2026-10-03
 **Applies to:** AI-assisted changes in `jolarca-hermes-agents`
 **Compliance:** SOC 2 Type II · ISO 27001:2022 · GDPR Art. 32
@@ -426,3 +426,4 @@ or silently ignored.
 | 2026-10-03 | Rebased onto merged `main` after PR #19 (eight controls wired) and PR #20 (`security` gate made binding): §7.9 open item resolved, §5 and §7.12 extended to cover gates that cannot fail, §7.11 records the squash-merge convention and the CHANGELOG conflict trap | Agent (proposed, pending operator acceptance) |
 | 2026-10-03 | Updated for the CI-hardening change: job count 14 → 15 with a `secrets-scan` job, §7.10 no longer claims secret scanning is absent (and warns on the `trailing-whitespace` / hard-break conflict), §7.7 names the third guard suite, §7.12 gains unpinned-action and missing-permissions rows | Agent (proposed, PR review) |
 | 2026-10-03 | §7.12 gains a tool-register consistency row and §7.7 names `tests/test_tool_register_consistency.py`, added after `docs/tool-register.md`'s totals sentence was found to contradict its own Tool index (39 claimed, 38 listed) | Agent (proposed, PR review) |
+| 2026-10-03 | Status **Proposed → Accepted**. Every factual figure re-verified against the tree first: 12 agents, 17 controls, 4 schemas, 17 scripts, 15 CI jobs with `lint`/`test`/`security` still the only required contexts, `provider` null for 12/12, and `make check` confirmed to exclude tests. Nothing in §7 was found stale at the moment of acceptance | Agent (accepted on operator instruction) |

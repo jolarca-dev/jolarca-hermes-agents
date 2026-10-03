@@ -1,6 +1,6 @@
 # HERMES-0002: Adversarial Evaluations and Consolidated Tool Register
 
-**Status:** Proposed
+**Status:** Accepted
 **Date:** 2026-10-01
 **Deciders:** jolarca-dev (solo operator)
 
@@ -120,5 +120,6 @@ scripts. `docs/target-tree.md` now shows the single `ci.yml` job model and inclu
 
 | Date | Change | Authority |
 |---|---|---|
-| 2026-10-03 | Corrected §3: grants total 40 → 41 (the orchestrator gained `log_decision` after this ADR was drafted) and the now-resolved mismatch observation dropped from its description; §Risks mitigation upgraded from declarative precedence to the automated register-consistency guard | Agent (proposed, PR review) |
 | 2026-10-01 | Initial ADR (proposed) | Agent (pending operator acceptance on merge) |
+| 2026-10-03 | Corrected §3: grants total 40 → 41 (the orchestrator gained `log_decision` after this ADR was drafted) and the now-resolved mismatch observation dropped from its description; §Risks mitigation upgraded from declarative precedence to the automated register-consistency guard | Agent (proposed, PR review) |
+| 2026-10-03 | Status **Proposed → Accepted**. In-repo claims re-verified first: 12 agents, all `provider: null`, eval cases schema-validated in the required `test` job, `adversarial-evals` still supplementary, branch protection still `lint`/`test`/`security`, and the register figures now re-derived by the guard. The out-of-repo claim (§Context, three registered `ai-llm` candidates being external SaaS) was not independently re-verified here — it originates in `jolarca-vendor` records | Agent (accepted on operator instruction) |
