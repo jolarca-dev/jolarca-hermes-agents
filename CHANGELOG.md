@@ -5,6 +5,32 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed — 2026-10-03
+
+- **Governance acceptance.** `docs/adr/HERMES-0002-…`, `docs/adr/HERMES-0003-…` and
+  `QODER.md` moved from `Proposed` to `Accepted` on the operator's instruction, and
+  `docs/adr/README.md`'s index statuses updated with them. Acceptance was not a rubber
+  stamp: each document's in-repo claims were re-verified against the tree immediately
+  beforehand, and each one's Revision History now records which claims were checked.
+  Confirmed at the moment of acceptance — 12 agents with `model_policy.provider` null for
+  all twelve; `vendor-risk-check` present and running `scripts/check_vendor_risk.py`;
+  `deny-pattern-scan` failing CI on a mission-platform token; eval cases schema-validated
+  inside the required `test` job; `adversarial-evals` still supplementary; branch
+  protection still `lint`/`test`/`security`; and `QODER.md` §7.1's figures (12 agents,
+  17 controls, 4 schemas, 17 scripts, 15 CI jobs) plus its statement that `make check`
+  excludes tests.
+- Two claim classes were **not** verified and are recorded as unverified rather than
+  attested: the `jolarca-vendor` statement that all three registered `ai-llm` candidates are
+  external SaaS, which is outside this repository, and anything about mission-side inference,
+  which ADR-0004 R4 forbids this tree from referencing at all.
+- **C13 stays open.** Accepting HERMES-0003 records the sourcing boundary; it registers no
+  provider, and `vendor-risk-check` would fail if one appeared without an assessment. The
+  document's `**Date:**` fields were left at their original 2026-10-01 values, matching
+  HERMES-0001's accepted header; acceptance dates live in the Revision History.
+- `docs/adr/HERMES-0002-…`: its two Revision History rows were swapped back into
+  chronological order. The row added in this workstream had been placed above the 2026-10-01
+  row, which broke the oldest-first ordering every other revision table in the repo uses.
+
 ### Added — 2026-10-03
 
 - `tests/test_tool_register_consistency.py`: re-derives every figure `docs/tool-register.md`
