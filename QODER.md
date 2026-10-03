@@ -142,7 +142,7 @@ Re-verify before relying on this; it ages.
 | Controls | 17 (C1-C17) in `docs/control-matrix.md` |
 | Schemas | 4, JSON Schema Draft 2020-12, `additionalProperties: false` |
 | Enforcement scripts | 17 under `scripts/` (16 `check_*.py` + `validate_agents.py`) |
-| CI jobs | 15: `lint`, `test`, `security` (required) + 12 supplementary |
+| CI jobs | 16: `lint`, `test`, `security` (required) + 13 supplementary |
 
 ### 7.2 Commands
 
@@ -284,13 +284,17 @@ the dead helper as a drive-by; raise it (§7.12).
   is the worst available failure mode.
 - Governance docs carry `**Status:**` and `**Date:**` headers plus a Revision
   History table naming the authority.
-- `CHANGELOG.md` follows Keep a Changelog under `## [Unreleased]`, using dated
-  `### Added — YYYY-MM-DD` / `### Changed — YYYY-MM-DD` subsections with a
-  one-paragraph rationale per entry. Add an entry for any notable change.
-- Markdown: prose lines at most 120 characters (`.markdownlint.json` MD013;
-  tables and code blocks are exempt). No trailing whitespace; file ends with a
-  newline. Note that no CI job or installed hook currently runs markdownlint —
-  treat the limit as a convention worth keeping, not a gate.
+- `CHANGELOG.md` follows Keep a Changelog under `## [Unreleased]`, using **one undated heading per
+  category** -- `### Added`, `### Changed`, `### Fixed`, plus `### Governance` for fleet-level
+  entries -- with a one-paragraph rationale per entry. Add an entry for any notable change.
+  **Do not date the sub-headings.** `MD024` forbids duplicate headings under one parent, and this
+  repo's earlier dated convention made every PR in a workstream repeat the same three headings
+  until CI flagged all fifteen of them.
+- Markdown: prose lines at most 120 characters (`.markdownlint.json` MD013; tables and code blocks
+  are exempt). No trailing whitespace; file ends with a newline. markdownlint is **now run in CI** by
+  the supplementary `markdown-lint` job, with `markdownlint-cli2` integrity-pinned by
+  `package-lock.json` and its version asserted in the job. So this is a gate, not a convention -- but
+  that job is **not** one of the three required contexts, so it reports without blocking a merge.
 - Do not restate a fact another repository owns. `jolarca-vendor` owns the DPIA
   and vendor register behind C13; link it, do not duplicate it. Duplication is
   how the fleet's drift problem started.
@@ -437,3 +441,4 @@ or silently ignored.
 | 2026-10-03 | Status **Proposed → Accepted**. Every factual figure re-verified against the tree first: 12 agents, 17 controls, 4 schemas, 17 scripts, 15 CI jobs with `lint`/`test`/`security` still the only required contexts, `provider` null for 12/12, and `make check` confirmed to exclude tests. Nothing in §7 was found stale at the moment of acceptance | Agent (accepted on operator instruction) |
 | 2026-10-03 | §7.1 and §7.2 corrected after the Makefile's "CI job `lint` runs `make check`" comment was found to be false — the job invokes the tools directly, which is why a gate added only to the Makefile would not bind. §7.12 gains that drift row; formatting is now enforced in both places | Agent (proposed, PR review) |
 | 2026-10-03 | §7.10 wording corrected after measuring live branch protection: `secrets-scan` **runs** on every PR and push but is **not** a required context, so it cannot block a merge — the earlier "is enforced by" overstated it. Recorded that promotion is not possible from this repo (the control-plane Terraform root holds no state; `AGENTS.md` §5 forbids an agent apply and out-of-band PATCH of branch protection). `README.md` was already accurate. | Agent (proposed, PR review) |
+| 2026-10-04 | §7.6 changelog convention changed to one **undated** heading per category, because the dated form was the root cause of the 15 MD024 findings; markdownlint is now enforced by the supplementary CI `markdown-lint` job, so §7.6 no longer calls it a convention | Agent (proposed, PR review) |

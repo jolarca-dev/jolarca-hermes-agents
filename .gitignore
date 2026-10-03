@@ -1,3 +1,7 @@
+# Node (dev-only markdown lint tool installed by CI via `npm ci`)
+node_modules/
+npm-debug.log*
+
 # Byte-compiled / optimised / DLL files
 __pycache__/
 *.py[cod]

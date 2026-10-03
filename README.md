@@ -100,7 +100,7 @@ make deny-patterns  # Scan for forbidden mission-platform references
 **Supplementary control jobs:** `agent-policy-guard`, `provenance-check`,
 `deny-pattern-scan`, `vendor-risk-check`, `pii-scan`, `retention-check`,
 `budget-check`, `kill-switch-test`, `audit-check`, `accessibility-gate`,
-`adversarial-evals`, `secrets-scan`
+`adversarial-evals`, `secrets-scan`, `markdown-lint`
 
 Action references in `ci.yml` are pinned to full commit SHAs with a version
 comment, and the workflow declares `permissions: contents: read`. These are
