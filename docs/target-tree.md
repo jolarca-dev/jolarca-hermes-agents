@@ -208,6 +208,7 @@ jolarca-hermes-agents/
 ├── Makefile                                # Fleet convention
 ├── pyproject.toml                          # Fleet convention
 ├── qodana.yaml                             # Fleet convention
+├── QODER.md                                # Fleet convention (agent behavioural contract)
 ├── README.md                               # Exists (needs update)
 └── SECURITY.md                             # Exists
 ```
@@ -216,20 +217,21 @@ jolarca-hermes-agents/
 
 ## Fleet-Standard Files
 
-These files are present in every sibling repo and must be added here:
+These files are present in every sibling repo. All of them now exist here; the
+statuses below were reconciled against `git ls-files` on 2026-10-03.
 
 | File | Status | Notes |
 |---|---|---|
-| `.editorconfig` | Missing | Add from fleet template |
-| `.gitleaksignore` | Missing | Add from fleet template |
-| `.markdownlint.json` | Missing | Add from fleet template |
-| `.pre-commit-config.yaml` | Missing | Add from fleet template |
-| `CHANGELOG.md` | Missing | Create with initial entry |
-| `CONTRIBUTING.md` | Missing | Link to jolarca-control CONTRIBUTING.md |
-| `Makefile` | Missing | Standard targets: lint, test, validate |
-| `pyproject.toml` | Missing | Python project config |
-| `qodana.yaml` | Missing | Code quality config |
-| `.github/dependabot.yml` | Missing | Fleet convention |
+| `.editorconfig` | Present | Fleet convention |
+| `.gitleaksignore` | Present | No ignore entries required |
+| `.markdownlint.json` | Present | Config only — no CI job or installed hook runs markdownlint |
+| `.pre-commit-config.yaml` | Present | Config only — the hooks are not installed in this clone |
+| `CHANGELOG.md` | Present | Keep a Changelog format |
+| `CONTRIBUTING.md` | Present | States the three repo invariants |
+| `Makefile` | Present | Targets: lint, test, validate, check, evals, deny-patterns |
+| `pyproject.toml` | Present | Ruff, pytest and mypy config; no runtime dependencies |
+| `qodana.yaml` | Present | Code quality config |
+| `.github/dependabot.yml` | Present | github-actions and pip ecosystems, weekly |
 
 ---
 
@@ -274,3 +276,5 @@ Files are created in dependency order:
 | 2026-09-30 | Status promoted to Accepted (all agents scaffolded, all files present) | Agent (accepted by solo operator) |
 | 2026-10-01 | Added `evaluations/`, `schemas/eval-case.schema.json`, `docs/tool-register.md`, `scripts/check_eval_coverage.py`, `tests/test_eval_cases.py`; corrected the workflows block to the single `ci.yml` job model | Agent (proposed, PR review) |
 | 2026-10-01 | Added `HERMES-0003-...` to the ADR list | Agent (pending operator acceptance on merge) |
+| 2026-10-03 | Added `QODER.md` to the root file list — it was introduced by PR #21 without reconciling this Accepted tree at the same time | Agent (proposed, PR review) |
+| 2026-10-03 | Reconciled the Fleet-Standard Files table: all ten rows said `Missing` while all ten files were tracked and present, contradicting this document's own 2026-09-30 row ("all files present"). Statuses now read `Present`, and the two config-only files say so plainly rather than implying enforcement | Agent (proposed, PR review) |
