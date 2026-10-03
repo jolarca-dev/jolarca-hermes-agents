@@ -1,0 +1,12 @@
+{
+  "name": "jolarca-hermes-agents",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Dev-only tooling for this repository's markdown policy documents. No runtime dependency: this repository is declarative policy-as-code and installs nothing at build time. The lockfile exists solely so CI can install markdownlint-cli2 with integrity hashes on every transitive package instead of floating on a version range.",
+  "scripts": {
+    "markdown-lint": "markdownlint-cli2 --config .markdownlint.json \"**/*.md\""
+  },
+  "devDependencies": {
+    "markdownlint-cli2": "0.17.2"
+  }
+}

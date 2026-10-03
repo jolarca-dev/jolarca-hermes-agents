@@ -169,6 +169,31 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- **markdownlint is now a CI gate.** `.github/workflows/ci.yml` gained a `markdown-lint` job running
+  `markdownlint-cli2` against the committed `.markdownlint.json` over `git ls-files '*.md'`. It is
+  **supplementary**, the same posture as `secrets-scan`: it reports, and promotion to a required
+  context is a control-plane decision, not something this repository can grant itself.
+
+  **Pinning.** An exact version of `markdownlint-cli2` does not pin its ~80 transitive dependencies,
+  which float on semver ranges, so the repo now carries `package.json` + `package-lock.json`
+  (dev-only; nothing here is installed at build time). Measured on that lock: 81 packages, **80 of 80
+  non-root entries carry a sha512 integrity hash**, and **zero declare install scripts** -- which is
+  why `npm ci --ignore-scripts` skips nothing legitimate while guaranteeing no dependency lifecycle
+  code executes in the runner. The job then asserts the tool's own reported string equals
+  `markdownlint-cli2 v0.17.2 (markdownlint v0.37.4)` rather than trusting the lockfile was read.
+  Node is pinned to major `20` via SHA-pinned `actions/setup-node`; the residual float inside 20.x is
+  accepted because Node does not decide the verdict. `package-lock.json` is a generated file added to
+  a repository with no runtime dependencies -- worth flagging for review on exactly that basis.
+
+  **MD024 disposition, honestly.** The rule stays **enabled at default**; nothing was loosened. The
+  15 findings were same-parent duplicates this repo manufactured, and the fix was the heading
+  consolidation above. The root cause was also still live in `QODER.md`, which instructed
+  contributors to write dated `### Added — YYYY-MM-DD` subsections under `## [Unreleased]` -- i.e. the
+  contract told every PR to regrow exactly what the new gate rejects. Binding MD024 without correcting
+  that instruction would have made the next compliant contributor fail CI, so §7.6 now mandates one
+  undated heading per category. `docs/target-tree.md` and `QODER.md` §7.6 both previously stated that
+  **nothing runs markdownlint**; those claims are now false and were updated in the same change.
+
 - `CHANGELOG.md`: consolidated `## [Unreleased]` from **25 dated sub-headings into one heading per
   category** (`Added`, `Changed`, `Fixed`, plus `Governance` kept as its own). This is what actually
   cleared the last 15 `MD024` findings: same-parent duplicates produced by every PR in this

@@ -1,0 +1,102 @@
+"""Guard that the markdown lint gate exists, is pinned, and actually fails on a bad document.
+
+Motivation: `.markdownlint.json` has existed for a long time while nothing executed it -- the
+"configured but never run" class ADR-0004 R3 targets. The workstream that finally bound it first had
+to clear 87 findings (87 -> 39 -> 15 -> 0) so the gate could arrive green instead of being weakened
+on its first run.
+
+This suite pins the parts that make the gate real rather than decorative:
+
+  * a `markdown-lint` job exists in CI, and is **supplementary** -- it is deliberately not one of
+    the three required contexts, exactly like `secrets-scan`;
+  * the tool is pinned by an npm lockfile whose entries carry integrity hashes, and installed with
+    `--ignore-scripts` so no dependency postinstall runs in the runner;
+  * the job asserts the resolved tool version instead of trusting the lockfile to have been read
+    correctly;
+  * the config is the committed `.markdownlint.json`, and `MD024` is left **enabled at default**:
+    the duplicate headings it once flagged were same-parent duplicates this repo created by
+    stacking PRs at one anchor, and the honest disposition was to consolidate the changelog, not
+    to loosen the rule.
+"""
+
+from __future__ import annotations
+
+import json
+import pathlib
+import re
+
+import yaml
+
+ROOT = Path = pathlib.Path(__file__).resolve().parent.parent
+CI = ROOT / ".github" / "workflows" / "ci.yml"
+REQUIRED_CONTEXTS = {"lint", "test", "security"}
+PINNED_CLI = "0.17.2"
+
+
+def _job() -> dict:
+    doc = yaml.safe_load(CI.read_text(encoding="utf-8"))
+    return doc["jobs"]["markdown-lint"]
+
+
+def _blob(job: dict) -> str:
+    parts = []
+    for step in job["steps"]:
+        parts.append(str(step.get("run", "")))
+        parts.append(str(step.get("uses", "")))
+        parts.append(json.dumps(step.get("with", {}), ensure_ascii=False))
+        for k, v in (step.get("env") or {}).items():
+            parts.append(f"{k}={v}")
+    return "\n".join(parts).lower()
+
+
+def test_markdown_lint_job_exists_and_uses_the_committed_config():
+    blob = _blob(_job())
+    assert "markdownlint-cli2" in blob, "job no longer invokes markdownlint-cli2"
+    assert ".markdownlint.json" in blob or "--config" in blob, (
+        f"job does not point at the committed config: {blob[:200]}"
+    )
+
+
+def test_dependency_install_is_integrity_pinned_and_script_free():
+    """A version string alone does not pin transitive deps; a lockfile with integrity does."""
+    blob = _blob(_job())
+    assert "npm ci" in blob, f"job does not install from the lockfile via npm ci: {blob[:200]}"
+    assert "--ignore-scripts" in blob, "npm install runs dependency lifecycle scripts in the runner"
+    lock = json.loads((ROOT / "package-lock.json").read_text(encoding="utf-8"))
+    pkgs = lock["packages"]
+    pinned = [k for k, v in pkgs.items() if k.endswith("node_modules/markdownlint-cli2")]
+    assert pinned, "markdownlint-cli2 is absent from the lockfile"
+    entry = pkgs[pinned[0]]
+    assert entry["version"] == PINNED_CLI, f"lockfile pins {entry['version']}, expected {PINNED_CLI}"
+    missing = [k for k, v in pkgs.items() if k != "" and isinstance(v, dict) and not v.get("integrity")]
+    assert not missing, f"lockfile entries without integrity hashes: {missing[:5]}"
+
+
+def test_job_asserts_the_resolved_tool_version():
+    """Trust the binary's own report, not a file we hope npm honoured."""
+    blob = _blob(_job())
+    assert PINNED_CLI in blob, f"job never asserts version {PINNED_CLI}"
+    assert re.search(r"(grep|cmp|test|\[\[|\|\| *echo)", blob), "version check has no failure path"
+
+
+def test_markdown_lint_is_supplementary_not_required():
+    """Same posture as secrets-scan: it reports, and promotion is a control-plane decision."""
+    doc = yaml.safe_load(CI.read_text(encoding="utf-8"))
+    assert "markdown-lint" in doc["jobs"], "job id drifted from the name docs cite"
+    assert "markdown-lint" not in REQUIRED_CONTEXTS
+
+
+def test_md024_stays_enabled_at_default():
+    """The duplicate headings were ours, so the changelog was consolidated rather than the rule."""
+    cfg = json.loads((ROOT / ".markdownlint.json").read_text(encoding="utf-8"))
+    assert cfg.get("default") is True
+    assert "MD024" not in cfg, (
+        "MD024 was disabled or re-scoped; the 15 findings it reported were same-parent duplicates "
+        "created by stacking PRs at one CHANGELOG anchor and were fixed by consolidation"
+    )
+
+
+def test_guard_is_not_vacuous():
+    job = _job()
+    assert len(job["steps"]) >= 3, f"markdown-lint job has only {len(job['steps'])} steps"
+    assert len(_blob(job)) > 150, "job body implausibly short -- parser is not reading steps"

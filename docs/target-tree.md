@@ -207,6 +207,8 @@ jolarca-hermes-agents/
 ├── CONTRIBUTING.md                         # Fleet convention
 ├── LICENSE                                 # Exists (all-rights-reserved)
 ├── Makefile                                # Fleet convention
+├── package.json                            # Dev-only: markdown lint tool (no runtime dependency)
+├── package-lock.json                       # Integrity pin for markdownlint-cli2 + transitive deps
 ├── pyproject.toml                          # Fleet convention
 ├── qodana.yaml                             # Fleet convention
 ├── QODER.md                                # Fleet convention (agent behavioural contract)
@@ -225,7 +227,7 @@ statuses below were reconciled against `git ls-files` on 2026-10-03.
 |---|---|---|
 | `.editorconfig` | Present | Fleet convention |
 | `.gitleaksignore` | Present | No ignore entries required |
-| `.markdownlint.json` | Present | Config only — no CI job or installed hook runs markdownlint |
+| `.markdownlint.json` | Present | Enforced by the supplementary CI `markdown-lint` job (not a required context) |
 | `.pre-commit-config.yaml` | Present | Config only — the hooks are not installed in this clone |
 | `CHANGELOG.md` | Present | Keep a Changelog format |
 | `CONTRIBUTING.md` | Present | States the three repo invariants |
@@ -279,3 +281,4 @@ Files are created in dependency order:
 | 2026-10-01 | Added `HERMES-0003-...` to the ADR list | Agent (pending operator acceptance on merge) |
 | 2026-10-03 | Added `QODER.md` to the root file list — it was introduced by PR #21 without reconciling this Accepted tree at the same time | Agent (proposed, PR review) |
 | 2026-10-03 | Reconciled the Fleet-Standard Files table: all ten rows said `Missing` while all ten files were tracked and present, contradicting this document's own 2026-09-30 row ("all files present"). Statuses now read `Present`, and the two config-only files say so plainly rather than implying enforcement | Agent (proposed, PR review) |
+| 2026-10-04 | Added `package.json` and `package-lock.json` to the root file list; `.markdownlint.json` status changed from config-only to enforced by the CI `markdown-lint` job | Agent (accepted, PR review) |

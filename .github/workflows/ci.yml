@@ -255,3 +255,55 @@ jobs:
         # organisation-owned repositories and fails on every run, which is
         # finding F-01 in jolarca-security.
         run: gitleaks git . --redact --exit-code 1 --log-opts="--all"
+
+  # ------------------------------------------------------------------------
+  # markdown-lint — `.markdownlint.json` existed for a long time while nothing
+  # executed it, which is ADR-0004 R3's "a control without a failing CI job is
+  # folklore". Bound as a SUPPLEMENTARY job, the same posture as secrets-scan:
+  # it reports, and promotion to a required context is a control-plane decision.
+  # It arrives at zero findings because the 87 that existed were cleared first
+  # by formatting-only PRs instead of by relaxing the rules.
+  #
+  # Pinning: an exact version of markdownlint-cli2 alone does NOT pin its ~80
+  # transitive dependencies, which float on semver ranges. The committed
+  # package-lock.json is what pins them, and `npm ci` verifies every entry's
+  # integrity hash. --ignore-scripts is deliberate: measured on this lockfile
+  # zero packages declare install scripts, so nothing legitimate is skipped and
+  # no dependency lifecycle code can execute in the runner.
+  # ------------------------------------------------------------------------
+  markdown-lint:
+    name: markdown-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          # Major pin. The residual float inside Node 20.x is accepted
+          # deliberately: the artefact that decides the verdict is
+          # markdownlint-cli2, which is integrity-pinned by the lockfile and
+          # then asserted by exact string below.
+          node-version: "20"
+
+      - name: Install integrity-pinned markdownlint-cli2
+        run: npm ci --no-audit --no-fund --ignore-scripts
+
+      - name: Assert the resolved tool version
+        env:
+          PINNED_CLI: "0.17.2"
+          PINNED_MARKDOWNLINT: "0.37.4"
+        run: |
+          set -euo pipefail
+          out="$(./node_modules/.bin/markdownlint-cli2 -v 2>&1 | head -1)"
+          echo "resolved: $out"
+          if [[ "$out" != "markdownlint-cli2 v${PINNED_CLI} (markdownlint v${PINNED_MARKDOWNLINT})" ]]; then
+            echo "::error::tool version drifted from package-lock.json: $out"
+            exit 1
+          fi
+
+      - name: Markdownlint tracked documents
+        run: |
+          set -euo pipefail
+          # Tracked files only, so the verdict matches what a reviewer can see
+          # in git and cannot be inflated or hidden by untracked scratch markdown.
+          git ls-files -z '*.md' | xargs -0 --no-run-if-empty \
+            ./node_modules/.bin/markdownlint-cli2 --config .markdownlint.json
