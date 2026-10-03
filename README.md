@@ -76,7 +76,7 @@ jolarca-hermes-agents/
 │   └── adr/
 │       ├── HERMES-0001-*.md   # Architecture decisions
 │       └── HERMES-0002-*.md   # Evaluations + tool register
-├── .github/workflows/ci.yml   # CI: lint, test, security + 9 control jobs
+├── .github/workflows/ci.yml   # CI: lint, test, security + 11 control jobs
 ├── Makefile                   # lint, test, validate, check
 ├── pyproject.toml             # Python project config
 └── CHANGELOG.md               # Change log
@@ -97,9 +97,10 @@ make deny-patterns  # Scan for forbidden mission-platform references
 
 **Required checks** (branch protection): `lint`, `test`, `security`
 
-**Supplementary control jobs:** `agent-policy-guard`, `deny-pattern-scan`,
-`pii-scan`, `retention-check`, `budget-check`, `kill-switch-test`,
-`audit-check`, `accessibility-gate`, `adversarial-evals`
+**Supplementary control jobs:** `agent-policy-guard`, `provenance-check`,
+`deny-pattern-scan`, `vendor-risk-check`, `pii-scan`, `retention-check`,
+`budget-check`, `kill-switch-test`, `audit-check`, `accessibility-gate`,
+`adversarial-evals`
 
 ## Contributing
 

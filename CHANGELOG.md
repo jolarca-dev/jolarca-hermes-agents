@@ -5,6 +5,35 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added — 2026-10-03
+
+- `.github/workflows/ci.yml`: wired the eight `scripts/check_*.py` enforcement scripts that
+  existed and passed standalone but were invoked by no CI job, which left C1, C2, C3, C4,
+  C5, C7, C12 and C13 folklore under ADR-0004 R3 ("a control without a failing CI job is
+  folklore"). Two supplementary jobs were created — `provenance-check` (C3 editorial
+  approval, C4 source provenance) and `vendor-risk-check` (C13 model vendor risk and the
+  null-provider invariant) — making the job names `docs/control-matrix.md` already cited
+  real, and five control steps were added to `agent-policy-guard` (C1 approved sources,
+  C2 tenant isolation, C5 translation review, C7 doctrine escalation, C12 injection
+  defence) to match the coverage that matrix already attributed to it. Job count 12 → 14.
+  The three required status checks (`lint`, `test`, `security`) are unchanged, so neither
+  branch protection nor the fleet allow-list needs updating.
+- `tests/test_ci_control_wiring.py`: regression guard for both drift classes — every
+  `scripts/check_*.py` must be invoked by a CI job, and every job the control matrix cites
+  must be defined in `ci.yml`. Includes a non-vacuity test so a parser that silently
+  matches nothing cannot turn those assertions into trivial passes, and a check that the
+  protected status contexts keep their exact names.
+
+### Changed — 2026-10-03
+
+- `docs/adr/HERMES-0003-model-sourcing-and-mission-boundary.md` §4: now names
+  `vendor-risk-check` as the enforcement locus for the null-provider invariant. The prior
+  wording said only that `check_vendor_risk.py` "keeps asserting" it; because no job
+  invoked that script, the assertion was not enforced. Revision History records the
+  correction rather than silently rewriting the claim.
+- `README.md`: supplementary control job list and the `ci.yml` structure comment updated
+  from 9 jobs to 11.
+
 ### Added — 2026-10-01
 
 - `docs/adr/HERMES-0003-model-sourcing-and-mission-boundary.md`: records that self-hosted

@@ -71,11 +71,12 @@ and TIA. This path is gated on external vendor engagement and remains the slower
 
 ### 4. Providers stay null until a marketplace path completes
 
-`model_policy.provider` remains `null` for all 12 agents. `scripts/check_vendor_risk.py`
-keeps asserting that invariant, so the fleet cannot silently acquire a provider before
-its assessment lands. C13 therefore stays **open for the marketplace fleet** — it is
-not closed by the existence of mission-side inference, which is a different system
-serving a different boundary.
+`model_policy.provider` remains `null` for all 12 agents. That invariant is enforced by
+the `vendor-risk-check` CI job, which runs `scripts/check_vendor_risk.py` and fails if any
+agent declares a provider, so the fleet cannot silently acquire one before its assessment
+lands. C13 therefore stays **open for the marketplace fleet** — it is not closed by the
+existence of mission-side inference, which is a different system serving a different
+boundary.
 
 ### 5. Self-hosting is not governance-free
 
@@ -143,3 +144,4 @@ any agent calls it:
 | Date | Change | Authority |
 |---|---|---|
 | 2026-10-01 | Initial ADR (proposed) | Agent (pending operator acceptance on merge) |
+| 2026-10-03 | §4 corrected to name `vendor-risk-check` as the enforcement locus for the null-provider invariant. When this ADR was written, `check_vendor_risk.py` existed and passed locally but was invoked by no CI job, so the assertion it describes was not actually enforced; that job is now wired | Agent (proposed, pending operator acceptance) |
