@@ -266,6 +266,10 @@ the dead helper as a drive-by; raise it (§7.12).
   `permissions`, the secret scanner is wired and licence-free). Edit `ci.yml`
   and these are the first failures to expect — they are the fix for the drift,
   not a nuisance.
+- `tests/test_tool_register_consistency.py` re-derives `docs/tool-register.md` from the
+  twelve `agent.yaml` files: the stated totals, each agent's grant row, the tool-index set
+  in both directions, and the enumerated shared tools must all match the fleet. Edit any
+  `tool_grants` list and this is where an unstale register surfaces.
 
 ### 7.8 Documentation conventions
 
@@ -382,6 +386,7 @@ classes, each with the check that detects it:
 | Docstring or prose overclaims what a script checks | read the script body |
 | Blueprint doc diverges from the as-built tree | diff `docs/target-tree.md` against `git ls-files` |
 | ADR asserts an invariant no check enforces | grep the assertion's subject across `scripts/` and `tests/` |
+| Register totals, grant rows or tool index stop matching the fleet's `tool_grants` | `tests/test_tool_register_consistency.py` (automated) |
 
 Report these as findings with evidence and a proposed remediation, in the
 response or as an issue — not as an unrequested drive-by commit, and not as a
@@ -420,3 +425,4 @@ or silently ignored.
 | 2026-10-03 | Initial behavioural contract for AI-assisted changes | Agent (proposed, pending operator acceptance) |
 | 2026-10-03 | Rebased onto merged `main` after PR #19 (eight controls wired) and PR #20 (`security` gate made binding): §7.9 open item resolved, §5 and §7.12 extended to cover gates that cannot fail, §7.11 records the squash-merge convention and the CHANGELOG conflict trap | Agent (proposed, pending operator acceptance) |
 | 2026-10-03 | Updated for the CI-hardening change: job count 14 → 15 with a `secrets-scan` job, §7.10 no longer claims secret scanning is absent (and warns on the `trailing-whitespace` / hard-break conflict), §7.7 names the third guard suite, §7.12 gains unpinned-action and missing-permissions rows | Agent (proposed, PR review) |
+| 2026-10-03 | §7.12 gains a tool-register consistency row and §7.7 names `tests/test_tool_register_consistency.py`, added after `docs/tool-register.md`'s totals sentence was found to contradict its own Tool index (39 claimed, 38 listed) | Agent (proposed, PR review) |

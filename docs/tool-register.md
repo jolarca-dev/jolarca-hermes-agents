@@ -33,7 +33,7 @@ document, never the reverse.
 | observability | internal | none | `collect_telemetry`, `detect_drift`, `emit_incident_signal` |
 | website | public | editorial | `compose_page`, `check_editorial_approval`, `check_accessibility_gate` |
 
-**Totals (verified):** 41 grants across 12 agents; 39 distinct tools. Three tools are
+**Totals (verified):** 41 grants across 12 agents; 38 distinct tools. Three tools are
 shared: `detect_drift` (audit, observability), `request_editorial_approval`
 (content, translation), and `log_decision` (orchestrator, audit).
 
@@ -139,3 +139,4 @@ follow-up change and is no longer open.
 | 2026-10-01 | Initial register derived from the 12 `agent.yaml` `tool_grants` | Agent (proposed, PR review) |
 | 2026-10-01 | Fixed orchestrator grant/policy mismatch; added `log_decision` to orchestrator tool_grants and `kill_switch` to policy allow.actions | Agent (PR review) |
 | 2026-10-01 | Reviewed both observations against `policy.yaml` evidence; both confirmed correct by design; opened one runtime follow-up on the shared `drift_detected` pattern name | Agent (PR review) |
+| 2026-10-03 | Corrected the totals sentence: it claimed 39 distinct tools while the Tool index immediately below listed 38, so the document contradicted itself. The per-agent table, the index set and the named shared tools were already accurate. Now re-derived on every test run by `tests/test_tool_register_consistency.py` | Agent (proposed, PR review) |
