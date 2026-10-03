@@ -15,7 +15,7 @@ and tests.
 
 ## Agent Fleet
 
-```
+```text
 Layer 0 ─── orchestrator ─── audit ─── observability
               │
 Layer 1 ─── guardrails
@@ -48,7 +48,7 @@ Layer 6 ─── website ─── (editorial + accessibility gates)
 
 ## Repository Structure
 
-```
+```text
 jolarca-hermes-agents/
 ├── agents/
 │   ├── orchestrator/          # Layer 0: routing, budget, kill-switch

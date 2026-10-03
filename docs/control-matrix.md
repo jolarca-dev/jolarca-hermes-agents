@@ -47,9 +47,12 @@ A control without an enforcement mechanism is folklore (ADR-0004 R3: "Enforced, 
 Controls are enforced at four layers:
 
 1. **Agent policy layer** — Each agent's `policy.yaml` declares allow/deny rules. Enforced by `agent-policy-guard` CI job.
-2. **Cross-agent validation layer** — Scripts that validate cross-agent contracts (e.g., provenance, editorial approval). Enforced by `provenance-check`, `accessibility-gate`.
-3. **Fleet-wide deny-list layer** — Scripts that scan for forbidden patterns (e.g., mission-prefixed references, mission-platform access). Enforced by `deny-pattern-scan`.
-4. **Adversarial evaluation layer** — Declarative attack/PII fixtures in `evaluations/`, grounded in agent policy and validated for coverage. Enforced by `adversarial-evals`.
+2. **Cross-agent validation layer** — Scripts that validate cross-agent contracts (e.g., provenance, editorial
+   approval). Enforced by `provenance-check`, `accessibility-gate`.
+3. **Fleet-wide deny-list layer** — Scripts that scan for forbidden patterns (e.g., mission-prefixed references,
+   mission-platform access). Enforced by `deny-pattern-scan`.
+4. **Adversarial evaluation layer** — Declarative attack/PII fixtures in `evaluations/`, grounded in agent policy and
+   validated for coverage. Enforced by `adversarial-evals`.
 
 ---
 

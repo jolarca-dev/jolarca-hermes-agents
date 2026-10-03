@@ -7,13 +7,14 @@
 
 ## Overview
 
-This is the target directory structure for `jolarca-hermes-agents`. It carries fleet-standard files (consistent with sibling repos) plus agent-specific layout.
+This is the target directory structure for `jolarca-hermes-agents`. It carries fleet-standard files (consistent with
+sibling repos) plus agent-specific layout.
 
 ---
 
 ## Tree
 
-```
+```text
 jolarca-hermes-agents/
 │
 ├── .github/

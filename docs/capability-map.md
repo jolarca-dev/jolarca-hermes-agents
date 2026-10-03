@@ -8,9 +8,11 @@
 
 ## Overview
 
-This document defines the 12-agent capability map for `jolarca-hermes-agents`. Each agent is an independently testable module with a unique identity tag, responsibility boundary, and dependency graph.
+This document defines the 12-agent capability map for `jolarca-hermes-agents`. Each agent is an independently testable
+module with a unique identity tag, responsibility boundary, and dependency graph.
 
-The capability map is the foundation for all subsequent work: directory structure, policy files, control matrix, and CI enforcement. **No agent scaffold begins until this map is approved.**
+The capability map is the foundation for all subsequent work: directory structure, policy files, control matrix, and
+CI enforcement. **No agent scaffold begins until this map is approved.**
 
 ---
 
@@ -37,7 +39,7 @@ The capability map is the foundation for all subsequent work: directory structur
 
 Dependencies flow downward. An agent must not be built before its dependencies exist.
 
-```
+```text
 Layer 0 (foundation):
   orchestrator
 
@@ -112,7 +114,9 @@ All identity tags follow the pattern `agent:jolarca:<module-id>`.
 | `restricted` | consent | Handles PII detection/redaction; must not log or retain PII |
 | `public` | seo, accessibility, website | Output is public-facing; no sensitive data in transit or at rest |
 
-**GDPR Art. 9 trigger:** If any agent processes religious-context data (e.g., liturgical content, pastoral references), the classification must be elevated to `restricted` and a DPIA triggered. This is a scheduled re-evaluation point, not a current gap.
+**GDPR Art. 9 trigger:** If any agent processes religious-context data (e.g., liturgical content, pastoral
+references), the classification must be elevated to `restricted` and a DPIA triggered. This is a scheduled
+re-evaluation point, not a current gap.
 
 ---
 
@@ -120,11 +124,15 @@ All identity tags follow the pattern `agent:jolarca:<module-id>`.
 
 Three types of human gates are defined:
 
-1. **blocks all** — The agent cannot proceed without human approval. Example: `guardrails` escalates doctrinal/pastoral questions to a human; no autonomous decision permitted.
-2. **editorial** — The agent's output requires human editorial approval before publication. Example: `content` drafts must be approved by `editorial`.
-3. **blocks release** — The agent's validation must pass before release. Example: `accessibility` WCAG checks must pass before deployment.
+1. **blocks all** — The agent cannot proceed without human approval. Example: `guardrails` escalates
+   doctrinal/pastoral questions to a human; no autonomous decision permitted.
+2. **editorial** — The agent's output requires human editorial approval before publication. Example: `content` drafts
+   must be approved by `editorial`.
+3. **blocks release** — The agent's validation must pass before release. Example: `accessibility` WCAG checks must
+   pass before deployment.
 
-**Solo-era deviation (D-04 equivalent):** In the solo-operator era, "human approval" means the operator reviews and merges the PR. When teams are created, these gates map to team-based approval workflows.
+**Solo-era deviation (D-04 equivalent):** In the solo-operator era, "human approval" means the operator reviews and
+merges the PR. When teams are created, these gates map to team-based approval workflows.
 
 ---
 
@@ -132,13 +140,24 @@ Three types of human gates are defined:
 
 ### Resolved
 
-1. **Doctrinal escalation predicate (resolved 2026-09-30):** The `guardrails` agent escalates on keyword patterns: `doctrinal_question`, `pastoral_advice`, `religious_interpretation`. These are defined in `agents/guardrails/policy.yaml` under `escalation.patterns`. Future enhancement: add semantic similarity to catechism texts using embedding-based detection.
+1. **Doctrinal escalation predicate (resolved 2026-09-30):** The `guardrails` agent escalates on keyword patterns:
+   `doctrinal_question`, `pastoral_advice`, `religious_interpretation`. These are defined in
+   `agents/guardrails/policy.yaml` under `escalation.patterns`. Future enhancement: add semantic similarity to
+   catechism texts using embedding-based detection.
 
-2. **Tenant isolation model (resolved 2026-09-30):** Per-tenant index partitioning. Each tenant has a separate index namespace in the `rag` agent. Queries must include `tenant_id` and are scoped to that partition. Cross-tenant access is denied in `agents/rag/policy.yaml` (`cross_tenant_index_access` in deny actions).
+2. **Tenant isolation model (resolved 2026-09-30):** Per-tenant index partitioning. Each tenant has a separate index
+   namespace in the `rag` agent. Queries must include `tenant_id` and are scoped to that partition. Cross-tenant
+   access is denied in `agents/rag/policy.yaml` (`cross_tenant_index_access` in deny actions).
 
-3. **Model vendor DPIA (resolved 2026-09-30):** Deferred to `jolarca-vendor` repo. All LLM providers must be registered there with completed DPIA before use. The `orchestrator` agent's `model_policy.provider` field is currently `null` (deferred). When a provider is selected, it must be registered in `jolarca-vendor` with risk scoring.
+3. **Model vendor DPIA (resolved 2026-09-30):** Deferred to `jolarca-vendor` repo. All LLM providers must be
+   registered there with completed DPIA before use. The `orchestrator` agent's `model_policy.provider` field is
+   currently `null` (deferred). When a provider is selected, it must be registered in `jolarca-vendor` with risk
+   scoring.
 
-4. **Kill-switch mechanism (resolved 2026-09-30):** Circuit breaker pattern. The `orchestrator` agent has `kill_switch` in its `tool_grants`. When activated, all agent operations halt immediately. The kill-switch is a manual override (operator sets a flag in the orchestrator's runtime config). Failure mode: graceful degradation — in-flight requests complete, new requests are rejected with a 503-equivalent response.
+4. **Kill-switch mechanism (resolved 2026-09-30):** Circuit breaker pattern. The `orchestrator` agent has
+   `kill_switch` in its `tool_grants`. When activated, all agent operations halt immediately. The kill-switch is a
+   manual override (operator sets a flag in the orchestrator's runtime config). Failure mode: graceful degradation —
+   in-flight requests complete, new requests are rejected with a 503-equivalent response.
 
 ### Deferred
 
