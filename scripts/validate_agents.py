@@ -1,19 +1,23 @@
 #!/usr/bin/env python3
-"""Validate all agent.yaml and policy.yaml files against JSON Schemas.
+"""Validate agent.yaml and policy.yaml structure and identity tags.
 
 jolarca-hermes-agents — marketplace (jolarca-dev) agent fleet.
 
-Checks enforced here:
-  * agent.yaml exists and is valid YAML
-  * policy.yaml exists and is valid YAML
+Checks enforced here, hand-rolled rather than schema-driven:
+  * agent.yaml exists, parses as YAML, and has a mapping at the root
+  * policy.yaml exists, parses as YAML, and has a mapping at the root
+  * the required keys are present in each file
   * identity_tag matches the pattern agent:jolarca:<module-id>
   * identity_tag is unique across all agents
-  * Required fields present per schema
+
+Full JSON Schema (Draft 2020-12) conformance is asserted elsewhere, in
+tests/test_schemas.py, which runs in the CI `test` job and not here. The two
+checks are complementary, not equivalent: a document that passes this script can
+still violate schemas/agent.schema.json.
 """
 
 from __future__ import annotations
 
-import json
 import re
 import sys
 from pathlib import Path
@@ -22,14 +26,8 @@ import yaml
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 AGENTS_DIR = BASE_DIR / "agents"
-SCHEMAS_DIR = BASE_DIR / "schemas"
 
 IDENTITY_TAG_RE = re.compile(r"^agent:jolarca:[a-z][a-z0-9-]*$")
-
-
-def load_schema(name: str) -> dict:
-    with open(SCHEMAS_DIR / name) as f:
-        return json.load(f)
 
 
 def validate_agent(agent_dir: Path) -> list[str]:
