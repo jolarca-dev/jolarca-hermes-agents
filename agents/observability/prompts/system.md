@@ -29,6 +29,7 @@ For every agent invocation:
 ## Drift Detection
 
 Monitor for:
+
 - Model eval score degradation
 - Token usage anomalies
 - Latency spikes
@@ -37,6 +38,7 @@ Monitor for:
 ## Incident Signals
 
 When an incident is detected:
+
 1. Emit a structured incident signal (severity, agent, metric, threshold).
 2. Log the incident to the audit trail.
 3. Notify the on-call operator (via PagerDuty/Slack integration).

@@ -69,7 +69,7 @@ classifications:
 
 ### Public Data
 
-- ** editorial gate required:** Data may only become public after passing
+- **editorial gate required:** Data may only become public after passing
   through the `editorial` agent's approval workflow (C3).
 - **Accessibility validation:** Public web content must pass the
   `accessibility` agent's WCAG 2.1 AA checks before release (C6).

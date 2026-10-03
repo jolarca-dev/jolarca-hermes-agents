@@ -33,6 +33,7 @@ For every page request:
 ## Gate Verification
 
 Before composing any content:
+
 - Check `editorial` approval status (must be "approved")
 - Check `accessibility` gate status (must be "passed")
 

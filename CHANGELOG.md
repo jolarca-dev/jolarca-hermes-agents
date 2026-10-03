@@ -5,6 +5,51 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed — 2026-10-04
+
+- Ran `markdownlint-cli2 --fix` over the tracked markdown set, clearing 46 findings across 13
+  files: `MD032/blanks-around-lists` (27), `MD022/blanks-around-headings` (19) and
+  `MD037/no-space-in-emphasis` (1). Repo-wide lint count 87 → 39.
+
+  Step 1 of the agreed measure-then-bind plan: **format first, bind later**, so the eventual gate
+  arrives green instead of being weakened on the day it ships. No gate was added here, so nothing
+  can fail on arrival and nothing was edited down to satisfy a tool.
+
+  The change is whitespace plus one broken emphasis marker, proved by classifying every diff line
+  rather than by trusting the lint count: **35 blank lines added, 0 removed, exactly one
+  non-blank pair** — `policies/data-processing-policy.md` line 72 read
+  `** editorial gate required:**`, where the space after `**` stopped the bold marker from ever
+  closing, in a GDPR/data-classification policy document. Verified independently of the linter by
+  comparing per-file word, heading, list-item, fence and table-row counts before and after: all
+  unchanged. Re-running `--fix` immediately after produces zero further changes, so the fixer is
+  idempotent.
+
+  Deliberately excluded from this pass: the 17 `MD013` prose wraps (need human review, because the
+  content is governance text), the 7 `MD040` unlabelled fences (a labeller that replaces every
+  bare ``` also relabels **closing** fences, and a fence with an info string cannot close — that
+  defect is what stopped my first scripted attempt), and the 15 `MD024` duplicate-heading findings
+  in this file, which are partly the Keep a Changelog format itself and partly duplicate
+  `### Added — 2026-10-03` headings this workstream created by stacking PRs.
+
+### Fixed — 2026-10-04
+
+- `QODER.md` Revision History: the row added for PR #32 was missing its third cell. The table
+  is `| Date | Change | Authority |`, but that row ended immediately after the change text, so
+  the attribution was silently absent. Introduced by the script that appended the row, not by
+  hand.
+
+  Found only by `markdownlint-cli2` (`MD056/table-column-count`) while measuring the docs ahead
+  of binding a markdown lint gate — which is the point worth recording: nothing in `make check`,
+  `ruff check`, `ruff format --check`, the deny-pattern scan or the 149 tests can observe a
+  malformed markdown table. A governance document can lose an attribution row and every
+  existing gate stays green.
+
+  Manual one-line fix, verified with the real linter: all nine revision rows now carry three
+  cells, and the repo-wide count drops 87 → 86 with MD056 gone. The 15 `MD024` duplicates in
+  this file's own `[Unreleased]` block remain pending the two-step markdown work; they are
+  partly the Keep a Changelog format (different parents) and partly duplicate
+  `### Added — 2026-10-03` headings this workstream created by stacking PRs.
+
 ### Changed — 2026-10-03
 
 - `QODER.md` §7.10 corrected: it said secret scanning "**is enforced by** the CI
