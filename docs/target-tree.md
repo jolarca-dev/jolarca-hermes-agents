@@ -208,6 +208,7 @@ jolarca-hermes-agents/
 ├── Makefile                                # Fleet convention
 ├── pyproject.toml                          # Fleet convention
 ├── qodana.yaml                             # Fleet convention
+├── QODER.md                                # Fleet convention (agent behavioural contract)
 ├── README.md                               # Exists (needs update)
 └── SECURITY.md                             # Exists
 ```
@@ -274,3 +275,4 @@ Files are created in dependency order:
 | 2026-09-30 | Status promoted to Accepted (all agents scaffolded, all files present) | Agent (accepted by solo operator) |
 | 2026-10-01 | Added `evaluations/`, `schemas/eval-case.schema.json`, `docs/tool-register.md`, `scripts/check_eval_coverage.py`, `tests/test_eval_cases.py`; corrected the workflows block to the single `ci.yml` job model | Agent (proposed, PR review) |
 | 2026-10-01 | Added `HERMES-0003-...` to the ADR list | Agent (pending operator acceptance on merge) |
+| 2026-10-03 | Added `QODER.md` to the root file list — it was introduced by PR #21 without reconciling this Accepted tree at the same time | Agent (proposed, PR review) |
