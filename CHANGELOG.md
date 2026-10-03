@@ -23,9 +23,25 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   must be defined in `ci.yml`. Includes a non-vacuity test so a parser that silently
   matches nothing cannot turn those assertions into trivial passes, and a check that the
   protected status contexts keep their exact names.
+- `tests/test_ci_gates_are_real.py`: regression guard for both ways a GitHub Actions gate
+  gets neutered — an exit-status swallow such as OR-true, and `continue-on-error` on a
+  step or a job — plus a check that the `security` context still invokes a real bandit
+  scan and a non-vacuity test so a workflow-format change cannot turn these assertions
+  into trivial passes. Written before the fix and observed failing on `ci.yml:security`.
 
 ### Changed — 2026-10-03
 
+- `.github/workflows/ci.yml`: removed the shell OR-true from the `security` job's `bandit`
+  scan, so that **required status check can now fail**. It previously ended
+  `bandit -r . -x .venv/ -ll || true`, discarding the scan's exit status: the job reported
+  green whether or not bandit found anything. Because `security` is one of the three
+  branch-protection required contexts, that green is read as assurance both by the merge
+  gate and by an auditor. This is the mirror image of ADR-0004 R3's "a control without a
+  failing CI job is folklore" — a job that cannot fail manufactures assurance. Verified
+  safe to enable against the combined tree: the repository's own Python exits 0 with
+  0 High and 0 Medium at the `-ll` threshold; Low findings stay below it. `-x .venv/` is
+  left untouched — it is inert in CI, and narrowing scan scope is a separate concern from
+  making the gate binding.
 - `docs/adr/HERMES-0003-model-sourcing-and-mission-boundary.md` §4: now names
   `vendor-risk-check` as the enforcement locus for the null-provider invariant. The prior
   wording said only that `check_vendor_risk.py` "keeps asserting" it; because no job
