@@ -329,9 +329,13 @@ the dead helper as a drive-by; raise it (§7.12).
   `check-yaml`, `check-merge-conflict`, `check-added-large-files`,
   `trailing-whitespace`, `end-of-file-fixer`, and ruff. Those hooks are **config
   only** and are not installed in this clone, so they gate nothing locally.
-  Secret scanning is enforced by the CI `secrets-scan` job, which runs the
-  checksum-verified gitleaks CLI over the full history. Do not substitute
-  `gitleaks-action`: it requires a `GITLEAKS_LICENSE` secret for
+  Secret scanning **runs** in the CI `secrets-scan` job — checksum-verified gitleaks CLI
+  over the full history, failing the build on a hit — but it is **not a required status
+  check**. Branch protection requires only `lint`, `test` and `security` (verified against
+  the live API on 2026-10-03), so a leaking pull request is marked red here yet could still
+  be merged. Do not describe this as enforced in the merge-blocking sense: promotion to a
+  required context is an operator change in the control plane, not an edit in this repo.
+  Do not substitute `gitleaks-action`: it requires a `GITLEAKS_LICENSE` secret for
   organisation-owned repositories and fails on every run.
 - Beware the `trailing-whitespace` hook before installing it. Governance docs
   end their `**Status:**` / `**Date:**` header lines with two spaces, a
@@ -432,3 +436,4 @@ or silently ignored.
 | 2026-10-03 | §7.12 gains a tool-register consistency row and §7.7 names `tests/test_tool_register_consistency.py`, added after `docs/tool-register.md`'s totals sentence was found to contradict its own Tool index (39 claimed, 38 listed) | Agent (proposed, PR review) |
 | 2026-10-03 | Status **Proposed → Accepted**. Every factual figure re-verified against the tree first: 12 agents, 17 controls, 4 schemas, 17 scripts, 15 CI jobs with `lint`/`test`/`security` still the only required contexts, `provider` null for 12/12, and `make check` confirmed to exclude tests. Nothing in §7 was found stale at the moment of acceptance | Agent (accepted on operator instruction) |
 | 2026-10-03 | §7.1 and §7.2 corrected after the Makefile's "CI job `lint` runs `make check`" comment was found to be false — the job invokes the tools directly, which is why a gate added only to the Makefile would not bind. §7.12 gains that drift row; formatting is now enforced in both places | Agent (proposed, PR review) |
+| 2026-10-03 | §7.10 wording corrected after measuring live branch protection: `secrets-scan` **runs** on every PR and push but is **not** a required context, so it cannot block a merge — the earlier "is enforced by" overstated it. Recorded that promotion is not possible from this repo (the control-plane Terraform root holds no state; `AGENTS.md` §5 forbids an agent apply and out-of-band PATCH of branch protection). `README.md` was already accurate. |
