@@ -5,6 +5,23 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed — 2026-10-03
+
+- `scripts/validate_agents.py`: the module docstring claimed the script validated agent and
+  policy files "against JSON Schemas" and listed "Required fields present per schema". It
+  never did. The script is a hand-rolled structural and identity-tag validator; the schema
+  files were only opened by `load_schema()`, a function defined and **never called**
+  anywhere in the repository. The docstring now states what the script actually checks and
+  names `tests/test_schemas.py` — which runs in the required CI `test` job — as where Draft
+  2020-12 conformance is asserted, so the two complementary checks are discoverable instead
+  of conflated. The dead helper and its now-unused `json` import and `SCHEMAS_DIR` constant
+  are removed. Behaviour is unchanged: 12 agents still validate, exit 0.
+
+  Deliberately **not** fixed by making the script schema-validate. `test` is already a
+  branch-protection required context, so schema conformance was never unenforced — only
+  misdocumented. Adding real validation here would mean installing `jsonschema` into the
+  `lint` and `agent-policy-guard` jobs to duplicate coverage that already gates merges.
+
 ### Added — 2026-10-03
 
 - `.github/workflows/ci.yml`: a `secrets-scan` job running the gitleaks CLI over the **full
