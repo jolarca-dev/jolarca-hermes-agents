@@ -107,14 +107,16 @@ follow-up change and is no longer open.
    grant that could write to or alter the audit log — so audit evidence immutability
    (C17) is not exposed by the shared tool.
 
-   **Residual follow-up (runtime-time, not a defect in these definitions):** both
-   agents declare the same escalation pattern token `drift_detected` with
-   `action: escalate`, yet they mean different things — audit drift (evidence and log
-   integrity, paired with `audit_log_tampering_attempt`) versus model/eval drift
-   (paired with `error_rate_spike` and `cost_ceiling_approached`). Sibling patterns
-   disambiguate in context, but a runtime keying alerts on the pattern name alone
-   would double-fire. Either qualify the pattern names or route escalation by
-   emitting agent id.
+   **Resolved 2026-10-03 — the tokens are now qualified per emitter.** Both agents had
+   declared the same escalation pattern token `drift_detected` with `action: escalate` while
+   meaning different things: audit drift (evidence and log integrity, paired with
+   `audit_log_tampering_attempt`) versus model/eval drift (paired with `error_rate_spike` and
+   `cost_ceiling_approached`). A runtime keying alerts on the pattern name alone would
+   double-fire. `audit` now emits `audit_log_drift_detected` and `observability` emits
+   `model_eval_drift_detected`, so the shared `detect_drift` tool still needs no split and
+   each alert carries exactly one unambiguous name. Enforced at zero tolerance by
+   `tests/test_escalation_pattern_uniqueness.py`, which now forbids any two agents sharing a
+   pattern token and keeps the exception register empty.
 
 2. **Composition over re-implementation (`website`) — confirmed correct by design.**
    `website` holds *verification* verbs only; the *producing* verbs stay with their
@@ -140,3 +142,4 @@ follow-up change and is no longer open.
 | 2026-10-01 | Fixed orchestrator grant/policy mismatch; added `log_decision` to orchestrator tool_grants and `kill_switch` to policy allow.actions | Agent (PR review) |
 | 2026-10-01 | Reviewed both observations against `policy.yaml` evidence; both confirmed correct by design; opened one runtime follow-up on the shared `drift_detected` pattern name | Agent (PR review) |
 | 2026-10-03 | Corrected the totals sentence: it claimed 39 distinct tools while the Tool index immediately below listed 38, so the document contradicted itself. The per-agent table, the index set and the named shared tools were already accurate. Now re-derived on every test run by `tests/test_tool_register_consistency.py` | Agent (proposed, PR review) |
+| 2026-10-03 | Closed the runtime follow-up opened on 2026-10-01: qualified the colliding `drift_detected` escalation token per emitter (`audit_log_drift_detected` in `audit`, `model_eval_drift_detected` in `observability`), so a name-keyed router can no longer double-fire. `detect_drift` remains legitimately shared — same verb, different sinks | Agent (proposed, PR review) |
