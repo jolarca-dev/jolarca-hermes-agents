@@ -7,6 +7,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added — 2026-10-03
 
+- `QODER.md`: behavioural contract for AI-assisted changes in this repository. Sections
+  1-6 carry the four general anti-hallucination principles plus two that this repository's
+  own doctrine demands — "enforced, not documented" (ADR-0004 R3) and dual-state honesty —
+  because a definition-only fleet whose `security` gate could not fail is exactly what
+  those principles exist to catch. Section 7 records verified repo-specific rules: the
+  deny-pattern scanner's exemption list and its prose-match trap, the schema and
+  identity-tag contracts, where schema validation actually runs versus where its docstring
+  claims it runs, the CI wiring invariants, gate failure behaviour, and a definition-of-done
+  checklist. Factual claims were measured against the tree rather than asserted, and
+  figures that age are flagged for re-verification instead of quoted as truth. Follows the
+  `QODER.md` convention already used by five sibling repositories in the fleet.
 - `.github/workflows/ci.yml`: wired the eight `scripts/check_*.py` enforcement scripts that
   existed and passed standalone but were invoked by no CI job, which left C1, C2, C3, C4,
   C5, C7, C12 and C13 folklore under ADR-0004 R3 ("a control without a failing CI job is
