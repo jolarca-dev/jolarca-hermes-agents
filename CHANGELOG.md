@@ -5,6 +5,38 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added — 2026-10-03
+
+- `tests/test_tool_register_consistency.py`: re-derives every figure `docs/tool-register.md`
+  states from the twelve `agent.yaml` files — the totals sentence (grants / agents /
+  distinct), each agent's grant row, the Tool index set in **both** directions, and the
+  enumerated shared tools. Closes the `QODER.md` drift class "an agent grants a tool the
+  register does not list", which previously had no automated check. Includes a non-vacuity
+  test so a parser that stops matching fails loudly rather than passing trivially.
+  Written first and observed failing on precisely one assertion
+  (`register claims 39 distinct tools; the fleet grants 38`) with the other four already
+  green — which is what proved the defect was a single prose figure, not a broken register.
+
+### Fixed — 2026-10-03
+
+- `docs/tool-register.md`: the totals sentence claimed **39 distinct tools** while the Tool
+  index immediately below it lists **38**, so the document contradicted its own table. The
+  register declared "if this register and an `agent.yaml` disagree, the `agent.yaml` wins"
+  and nothing checked it. Corrected to 38. Everything else was already accurate: the
+  per-agent rows sum to 41, the index set equals the granted set exactly with no phantom and
+  no omission, and the three named shared tools match the measured duplicates.
+  Root cause, reconstructed from history: when the orchestrator gained `log_decision`, that
+  tool was **already** granted elsewhere, so distinct stayed 38 while grants went 40 → 41 —
+  but both counters were incremented together. Two derived figures drifting in lockstep is
+  the tell that they were edited by assumption rather than recomputed; the new guard
+  recomputes them.
+- `docs/adr/HERMES-0002-…`: §3 described the register as consolidating "all **40**
+  `tool_grants`" — stale by one, since the orchestrator gained a grant after the ADR was
+  drafted — and still named the orchestrator grant/policy mismatch as a recorded observation
+  when that mismatch had been fixed and removed from the register. Both corrected. §Risks
+  now names the automated guard, and records that declarative precedence alone was
+  insufficient: the totals sentence drifted and nothing failed.
+
 ### Fixed — 2026-10-03
 
 - `scripts/validate_agents.py`: the module docstring claimed the script validated agent and

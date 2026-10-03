@@ -57,10 +57,11 @@ fixtures are written to be replayed unchanged once one is registered.
 
 ### 3. `docs/tool-register.md` is a derived least-privilege register
 
-It consolidates all 40 `tool_grants` (38 distinct) across the 12 agents, maps each tool
-to its control, and records observations (shared tools, the orchestrator grant/policy
-mismatch). The `agent.yaml` files remain the source of truth; the register never overrides
-them.
+It consolidates all 41 `tool_grants` (38 distinct) across the 12 agents, maps each tool
+to its control, and records observations on the shared tools. The orchestrator
+grant/policy mismatch surfaced during consolidation was fixed in a follow-up change and
+is no longer an open observation. The `agent.yaml` files remain the source of truth; the
+register never overrides them.
 
 ### 4. `adversarial-evals` is supplementary, not a required status check
 
@@ -97,7 +98,10 @@ scripts. `docs/target-tree.md` now shows the single `ci.yml` job model and inclu
   forbidden-token rule in `evaluations/README.md` and by `check_deny_patterns.py` scanning
   the directory.
 - The register could drift from `agent.yaml` — mitigated by declaring `agent.yaml` the
-  source of truth and recording the register as derived.
+  source of truth, recording the register as derived, and re-deriving every figure it
+  states on each test run in `tests/test_tool_register_consistency.py`. Declarative
+  precedence alone proved insufficient: the totals sentence drifted to "39 distinct"
+  against the 38 tools the register itself listed, and nothing failed.
 
 ---
 
@@ -116,4 +120,5 @@ scripts. `docs/target-tree.md` now shows the single `ci.yml` job model and inclu
 
 | Date | Change | Authority |
 |---|---|---|
+| 2026-10-03 | Corrected §3: grants total 40 → 41 (the orchestrator gained `log_decision` after this ADR was drafted) and the now-resolved mismatch observation dropped from its description; §Risks mitigation upgraded from declarative precedence to the automated register-consistency guard | Agent (proposed, PR review) |
 | 2026-10-01 | Initial ADR (proposed) | Agent (pending operator acceptance on merge) |
