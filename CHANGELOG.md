@@ -7,6 +7,37 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added — 2026-10-03
 
+- `tests/test_escalation_pattern_uniqueness.py`: a **ratchet** guard on escalation pattern
+  tokens. Measured on main, the twelve agents declare 28 distinct `escalation.patterns`
+  tokens and exactly one is shared: `drift_detected`, used by `audit` for evidence and
+  audit-log integrity (alongside `audit_log_tampering_attempt`) and by `observability` for
+  model/eval drift (alongside `error_rate_spike`, `cost_ceiling_approached`). Two different
+  incidents carrying one name means a runtime that routes alerts on pattern name alone
+  double-fires. This has been carried as prose in `docs/tool-register.md` since PR #17 with
+  nothing keeping it from spreading; now any new collision fails CI.
+
+  Built as a shrink-only baseline (`KNOWN_COLLISIONS`) rather than a blanket uniqueness rule,
+  because the two directions were verified to behave differently: a **new** collision fails
+  `test_no_new_escalation_pattern_collisions`, and **retiring** the listed one fails
+  `test_baseline_cannot_silently_absorb_the_debt` until the baseline entry is deleted. So the
+  existing debt cannot be absorbed as normal and cannot grow. Both were proven by mutation on
+  throwaway edits to `agents/observability/policy.yaml`, restored with `agents/` verified
+  clean.
+
+  Renaming was deliberately **not** done here, though it is mechanically safe: `git grep
+  drift_detected` matches only the two `policy.yaml` files plus prose in `CHANGELOG.md` and
+  `docs/tool-register.md` — no script, test or eval case consumes the token. The replacement
+  names are control vocabulary owned by the operator. Suggested, matching house style
+  (`audit_log_tampering_attempt`, `error_rate_spike`): `audit_log_drift_detected` for audit
+  and `model_eval_drift_detected` for observability, deleting the baseline entry in the same
+  change.
+
+- The same suite also asserts every agent's `escalation.action` is one of `block` /
+  `escalate`. A typo there would silently disable an escalation while still parsing as valid
+  YAML — the guard is on the vocabulary, not just the shape.
+
+### Added — 2026-10-03
+
 - `tests/test_tool_grant_policy_parity.py`: asserts that every entry in an agent's
   `agent.yaml` `tool_grants` also appears in that same agent's `policy.yaml`
   `allow.actions`, so no agent can hold a callable tool its own policy does not permit.
