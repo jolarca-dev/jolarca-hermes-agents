@@ -65,6 +65,16 @@ jobs:
         run: pip install pyyaml
       - name: Validate agent policies
         run: python scripts/validate_agents.py
+      - name: C1 approved-source retrieval only
+        run: python scripts/check_approved_sources.py
+      - name: C2 tenant and locale isolation
+        run: python scripts/check_tenant_isolation.py
+      - name: C5 translation review for sensitive content
+        run: python scripts/check_translation_review.py
+      - name: C7 no autonomous doctrinal decisions
+        run: python scripts/check_doctrine_escalation.py
+      - name: C12 prompt-injection defence
+        run: python scripts/check_injection_defence.py
 
   deny-pattern-scan:
     name: deny-pattern-scan
@@ -167,3 +177,31 @@ jobs:
         run: pip install pyyaml
       - name: Validate evaluation suite grounding and coverage
         run: python scripts/check_eval_coverage.py
+
+  provenance-check:
+    name: provenance-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pyyaml
+      - name: C3 editorial approval before publication
+        run: python scripts/check_editorial_approval.py
+      - name: C4 source provenance for every generated claim
+        run: python scripts/check_provenance.py
+
+  vendor-risk-check:
+    name: vendor-risk-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pyyaml
+      - name: C13 model vendor risk and null-provider invariant
+        run: python scripts/check_vendor_risk.py
