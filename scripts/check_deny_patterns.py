@@ -67,10 +67,7 @@ def scan_file(filepath: Path) -> list[str]:
         for pattern in FORBIDDEN_PATTERNS:
             if pattern.search(line):
                 rel_path = filepath.relative_to(BASE_DIR)
-                violations.append(
-                    f"{rel_path}:{line_num}: forbidden pattern "
-                    f"'{pattern.pattern}' found"
-                )
+                violations.append(f"{rel_path}:{line_num}: forbidden pattern '{pattern.pattern}' found")
 
     return violations
 
@@ -101,16 +98,10 @@ def main() -> int:
         all_violations.extend(violations)
 
     if all_violations:
-        print(
-            f"FAILED — {len(all_violations)} violation(s) in "
-            f"{file_count} file(s):\n"
-        )
+        print(f"FAILED — {len(all_violations)} violation(s) in {file_count} file(s):\n")
         for v in all_violations:
             print(f"  x {v}")
-        print(
-            "\nADR-0004 R4: marketplace repos must not reference "
-            "mission-platform resources."
-        )
+        print("\nADR-0004 R4: marketplace repos must not reference mission-platform resources.")
         return 1
 
     print(f"PASSED — {file_count} file(s) scanned, no violations.")

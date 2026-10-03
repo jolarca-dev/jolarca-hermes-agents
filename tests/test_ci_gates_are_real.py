@@ -53,9 +53,7 @@ def _run_steps() -> list[tuple[str, str, str]]:
 def test_no_run_step_swallows_its_exit_status():
     """No check may be reduced to a no-op by an OR-true."""
     offenders = [
-        f"{workflow}:{job} -> {script}"
-        for workflow, job, script in _run_steps()
-        if EXIT_STATUS_SWALLOW.search(script)
+        f"{workflow}:{job} -> {script}" for workflow, job, script in _run_steps() if EXIT_STATUS_SWALLOW.search(script)
     ]
     assert not offenders, f"run step(s) neutered by an exit-status swallow: {offenders}"
 
@@ -76,9 +74,7 @@ def test_no_step_or_job_declares_continue_on_error():
 def test_security_check_actually_runs_bandit():
     """The protected `security` context must invoke a real scan, not an empty step."""
     scripts = [script for _, job, script in _run_steps() if job == "security"]
-    assert any("bandit" in script for script in scripts), (
-        f"security job runs no bandit scan; steps were: {scripts}"
-    )
+    assert any("bandit" in script for script in scripts), f"security job runs no bandit scan; steps were: {scripts}"
 
 
 def test_workflows_are_parsed_and_non_vacuous():

@@ -16,8 +16,6 @@ def test_validate_agents_passes():
         text=True,
         cwd=REPO_ROOT,
     )
-    assert result.returncode == 0, (
-        f"validate_agents.py failed:\n{result.stdout}\n{result.stderr}"
-    )
+    assert result.returncode == 0, f"validate_agents.py failed:\n{result.stdout}\n{result.stderr}"
     assert "PASSED" in result.stdout
     assert "12 agent(s)" in result.stdout

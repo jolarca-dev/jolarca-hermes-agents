@@ -5,6 +5,36 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added — 2026-10-03
+
+- Python formatting is now **enforced** rather than merely declared. `make lint` gained
+  `ruff format --check .` and the required CI `lint` job gained a matching
+  `Ruff format check` step. Seven files were reformatted so the gate arrives green: four
+  pre-existing (`scripts/check_deny_patterns.py`, `scripts/validate_agents.py`,
+  `tests/test_deny_patterns.py`, `tests/test_validate_agents.py`), two of this workstream's own
+  earlier guard suites (`tests/test_ci_gates_are_real.py` from PR #20,
+  `tests/test_ci_hardening.py` from PR #23), and the new suite itself. Every join stays inside
+  `line-length = 120`, so `ruff check` still passes — measured, not assumed, because formatting
+  merges split string literals into longer single lines.
+- `tests/test_lint_gate_scope.py`: pins that **both** the Makefile `lint` recipe and the
+  required CI `lint` job run `ruff check` *and* `ruff format --check`, that formatting did not
+  crowd out `validate_agents.py` or `check_deny_patterns.py` in that job, and that the two
+  parsers actually found commands (non-vacuity). Written first: 3 of 4 failed. Mutation-proven
+  after: deleting the step from `ci.yml` fails exactly `test_ci_lint_job_verifies_formatting`;
+  deleting the Makefile line fails three.
+
+### Changed — 2026-10-03
+
+- `Makefile`: two comments claimed CI invokes make — the header ("CI job `lint` runs
+  `make check`") and the `check` target's help text ("Full pre-merge check (CI runs this)").
+  **Both false**: the job invokes `ruff check .`, `python scripts/validate_agents.py` and
+  `python scripts/check_deny_patterns.py` as three explicit steps and never calls make. The
+  claim was not cosmetic: had it been true, adding the formatting gate to the Makefile alone
+  would have sufficed; because it is false, a Makefile-only change binds nothing in CI. That
+  is precisely the "control that exists but runs nowhere" defect ADR-0004 R3 targets, so the
+  gate is wired in both places and both comments rewritten. `QODER.md` §7.1 and §7.2 corrected
+  to match, and §7.12 gains the corresponding drift row.
+
 ### Changed — 2026-10-03
 
 - **Governance acceptance.** `docs/adr/HERMES-0002-…`, `docs/adr/HERMES-0003-…` and

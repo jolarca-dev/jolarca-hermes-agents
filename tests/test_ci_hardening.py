@@ -38,10 +38,7 @@ NON_REGISTRY_PREFIXES = ("./", "docker://", "org://")
 
 
 def _workflows() -> dict[str, dict]:
-    return {
-        path.name: yaml.safe_load(path.read_text(encoding="utf-8"))
-        for path in sorted(WORKFLOW_DIR.glob("*.y*ml"))
-    }
+    return {path.name: yaml.safe_load(path.read_text(encoding="utf-8")) for path in sorted(WORKFLOW_DIR.glob("*.y*ml"))}
 
 
 def _iter_uses(node) -> list[str]:
@@ -68,9 +65,7 @@ def _pinnable_refs() -> list[str]:
 
 def test_action_references_are_pinned_to_full_commit_sha():
     """A mutable tag ref lets an upstream retarget change what we run."""
-    offenders = [
-        ref for ref in _pinnable_refs() if not FULL_COMMIT_SHA.match(ref.partition("@")[2])
-    ]
+    offenders = [ref for ref in _pinnable_refs() if not FULL_COMMIT_SHA.match(ref.partition("@")[2])]
     assert not offenders, f"action reference(s) not pinned to a full 40-char SHA: {offenders}"
 
 
@@ -107,9 +102,7 @@ def test_secret_scan_is_license_free_and_checksum_verified():
     """Reference: jolarca-security F-01. The action needs GITLEAKS_LICENSE."""
     text = (WORKFLOW_DIR / "ci.yml").read_text(encoding="utf-8")
     for ref in _iter_uses(_workflows()["ci.yml"]):
-        assert "gitleaks-action" not in ref, (
-            f"'{ref}' requires GITLEAKS_LICENSE for organisation repositories"
-        )
+        assert "gitleaks-action" not in ref, f"'{ref}' requires GITLEAKS_LICENSE for organisation repositories"
     assert "sha256sum -c" in text, "gitleaks download is not checksum verified"
     assert "--redact" in text, "gitleaks must redact findings so secrets never reach CI logs"
     assert "fetch-depth: 0" in text, "gitleaks must scan full history, not only HEAD"

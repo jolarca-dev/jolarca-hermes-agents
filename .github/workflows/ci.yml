@@ -25,6 +25,11 @@ jobs:
         run: pip install ruff pyyaml
       - name: Ruff lint
         run: ruff check .
+      - name: Ruff format check
+        # Enforced here as well as in `make lint`, because this job calls the tools
+        # directly instead of invoking make. Formatting drift is a control like any
+        # other: declaring it in a comment that no runner executes is folklore.
+        run: ruff format --check .
       - name: Validate agents
         run: python scripts/validate_agents.py
       - name: Check deny patterns
