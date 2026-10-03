@@ -7,6 +7,30 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added — 2026-10-03
 
+- `tests/test_tool_grant_policy_parity.py`: asserts that every entry in an agent's
+  `agent.yaml` `tool_grants` also appears in that same agent's `policy.yaml`
+  `allow.actions`, so no agent can hold a callable tool its own policy does not permit.
+  Previously nothing compared the two lists. `tool_grants` was read by
+  `scripts/check_kill_switch.py` and, since PR #25, by
+  `tests/test_tool_register_consistency.py` — neither of which checks a grant against the
+  same agent's `allow.actions`. Plus a guard that no agent
+  has an empty grant or allow set (an empty allow list would make the subset test pass
+  vacuously) and a non-vacuity test on the parser.
+
+  The relation asserted is **one-way, because that is what the fleet measures**. Across
+  the twelve agents only `orchestrator` has the two sets equal; the other eleven have
+  `tool_grants` as a strict subset of `allow.actions` (tally: 11 subset, 1 equal).
+  Asserting equality would fail eleven of twelve agents and state the wrong rule: least
+  privilege is breached by a grant the policy does not permit, never by a permitted action
+  the agent was never handed as a callable tool.
+
+  Zero violations exist today, so the guard arrives green. Mutation-proven: injecting an
+  escaping grant into `seo` failed exactly
+  `test_every_granted_tool_is_permitted_by_that_agent_policy` (1 failed, 2 passed), and the
+  injected file was restored with `agents/` verified clean.
+
+### Added — 2026-10-03
+
 - Python formatting is now **enforced** rather than merely declared. `make lint` gained
   `ruff format --check .` and the required CI `lint` job gained a matching
   `Ruff format check` step. Seven files were reformatted so the gate arrives green: four
