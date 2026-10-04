@@ -228,7 +228,7 @@ statuses below were reconciled against `git ls-files` on 2026-10-03.
 | `.editorconfig` | Present | Fleet convention |
 | `.gitleaksignore` | Present | No ignore entries required |
 | `.markdownlint.json` | Present | Enforced by the supplementary CI `markdown-lint` job (not a required context) |
-| `.pre-commit-config.yaml` | Present | Config only — the hooks are not installed in this clone |
+| `.pre-commit-config.yaml` | Present | Hooks run per clone once `pre-commit install` has been executed; no CI job runs them. `trailing-whitespace` carries `--markdown-linebreak-ext=md` (see `tests/test_precommit_hook_safety.py`) |
 | `CHANGELOG.md` | Present | Keep a Changelog format |
 | `CONTRIBUTING.md` | Present | States the three repo invariants |
 | `Makefile` | Present | Targets: help, lint, typecheck, test, validate, agents, schemas, deny-patterns, evals, markdown-lint, check |
@@ -284,3 +284,4 @@ Files are created in dependency order:
 | 2026-10-04 | Added `package.json` and `package-lock.json` to the root file list; `.markdownlint.json` status changed from config-only to enforced by the CI `markdown-lint` job | Agent (accepted, PR review) |
 | 2026-10-04 | `.github/dependabot.yml` row updated: npm ecosystem registered for the root lockfile added with the markdownlint gate, parity held by `tests/test_dependabot_coverage.py` | Agent (accepted, PR review) |
 | 2026-10-04 | Makefile row brought current -- 11 targets listed including the new `markdown-lint`, which is deliberately excluded from `check` | Agent (accepted, PR review) |
+| 2026-10-04 | `.pre-commit-config.yaml` row corrected: it claimed the hooks were config-only and not installed, which described one working copy rather than the mechanism; now states per-clone installation, that no CI job runs them, and the markdown linebreak mitigation | Agent (accepted, PR review) |

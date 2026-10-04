@@ -1,7 +1,16 @@
 # Pre-commit hooks — runs locally before every commit.
-# Install: pre-commit install
+# Install the tool into the project venv:  python -m pip install pre-commit
+# Then enable the git hook:                pre-commit install
 # Run manually: pre-commit run --all-files
 # Update hooks: pre-commit autoupdate
+#
+# `trailing-whitespace` MUST keep --markdown-linebreak-ext=md: three governance docs
+# (docs/capability-map.md, docs/control-matrix.md, docs/target-tree.md) open their
+# `**Status:** Accepted` metadata headers with markdown hard line breaks (two trailing
+# spaces). Stripping them fuses the metadata into one rendered paragraph. The next
+# commit that edits those files would do it silently. Held by
+# tests/test_precommit_hook_safety.py — do not swap the arg for a docs/ exclude, which
+# would remove real trailing-whitespace coverage instead of protecting the construct.
 
 repos:
   - repo: https://github.com/gitleaks/gitleaks
@@ -17,6 +26,7 @@ repos:
       - id: check-merge-conflict
       - id: check-added-large-files
       - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
       - id: end-of-file-fixer
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
