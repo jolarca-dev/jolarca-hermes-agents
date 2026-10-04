@@ -30,7 +30,8 @@ import yaml
 ROOT = Path = pathlib.Path(__file__).resolve().parent.parent
 CI = ROOT / ".github" / "workflows" / "ci.yml"
 REQUIRED_CONTEXTS = {"lint", "test", "security"}
-PINNED_CLI = "0.17.2"
+PINNED_CLI = "0.23.3"
+PINNED_MARKDOWNLINT = "0.41.1"
 
 
 def _job() -> dict:
@@ -68,6 +69,15 @@ def test_dependency_install_is_integrity_pinned_and_script_free():
     assert pinned, "markdownlint-cli2 is absent from the lockfile"
     entry = pkgs[pinned[0]]
     assert entry["version"] == PINNED_CLI, f"lockfile pins {entry['version']}, expected {PINNED_CLI}"
+    # The bundled engine is what actually reports findings, so it must move in lockstep with the CLI.
+    engine = [k for k, v in pkgs.items() if k.endswith("node_modules/markdownlint")]
+    assert engine, "markdownlint is absent from the lockfile"
+    assert pkgs[engine[0]]["version"] == PINNED_MARKDOWNLINT, (
+        f"lockfile bundles markdownlint {pkgs[engine[0]]['version']}, expected {PINNED_MARKDOWNLINT}"
+    )
+    declared = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))["devDependencies"]
+    floats = {k: v for k, v in declared.items() if not re.fullmatch(r"\d+\.\d+\.\d+", v)}
+    assert not floats, f"devDependencies must be exact versions, not ranges: {floats}"
     missing = [k for k, v in pkgs.items() if k != "" and isinstance(v, dict) and not v.get("integrity")]
     assert not missing, f"lockfile entries without integrity hashes: {missing[:5]}"
 
@@ -76,6 +86,10 @@ def test_job_asserts_the_resolved_tool_version():
     """Trust the binary's own report, not a file we hope npm honoured."""
     blob = _blob(_job())
     assert PINNED_CLI in blob, f"job never asserts version {PINNED_CLI}"
+    assert PINNED_MARKDOWNLINT in blob, (
+        f"job never asserts the bundled markdownlint version {PINNED_MARKDOWNLINT}; the two pin sites "
+        f"(workflow env and this constant) must move together or an upgrade installs one and checks the other"
+    )
     assert re.search(r"(grep|cmp|test|\[\[|\|\| *echo)", blob), "version check has no failure path"
 
 
@@ -161,6 +175,21 @@ def test_md024_stays_enabled_at_default():
     assert "MD024" not in cfg, (
         "MD024 was disabled or re-scoped; the 15 findings it reported were same-parent duplicates "
         "created by stacking PRs at one CHANGELOG anchor and were fixed by consolidation"
+    )
+
+
+def test_md060_stays_enabled_after_the_upgrade():
+    """The 0.41.1 upgrade found 428 MD060 findings and the corpus was re-spaced instead.
+
+    Pinning this here because a new rule firing on accepted governance prose is exactly the moment
+    someone reaches for `MD060: false`. The delimiter rows were re-spaced 1:1 (60 rows, 21 files, word
+    multiset unchanged) and both runners then reported 0 -- that is the precedent to follow, not a
+    rule exemption or a docs/ exclude.
+    """
+    cfg = json.loads((ROOT / ".markdownlint.json").read_text(encoding="utf-8"))
+    assert "MD060" not in cfg, (
+        "MD060/table-column-style was disabled or reconfigured; it is the rule that flagged 428 "
+        "tight table delimiters on the 0.41.1 upgrade and was cleared by re-spacing those rows"
     )
 
 

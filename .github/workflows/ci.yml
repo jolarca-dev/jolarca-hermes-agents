@@ -269,7 +269,8 @@ jobs:
   # package-lock.json is what pins them, and `npm ci` verifies every entry's
   # integrity hash. --ignore-scripts is deliberate: measured on this lockfile
   # zero packages declare install scripts, so nothing legitimate is skipped and
-  # no dependency lifecycle code can execute in the runner.
+  # no dependency lifecycle code can execute in the runner. (Re-measured on the
+  # 0.23.3 lock: 88 entries, 0 without an integrity hash, 0 with install scripts.)
   # ------------------------------------------------------------------------
   markdown-lint:
     name: markdown-lint
@@ -278,19 +279,21 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          # Major pin. The residual float inside Node 20.x is accepted
-          # deliberately: the artefact that decides the verdict is
-          # markdownlint-cli2, which is integrity-pinned by the lockfile and
-          # then asserted by exact string below.
-          node-version: "20"
+          # Major pin. Raised 20 -> 22 because markdownlint-cli2 0.23.3 and the markdownlint
+          # 0.41.1 it bundles both declare engines.node ">= 22"; npm emits EBADENGINE under 20.
+          # The residual float inside Node 22.x is accepted deliberately: the artefact that
+          # decides the verdict is markdownlint-cli2, which is integrity-pinned by the lockfile
+          # and then asserted by exact string below. This job is the workflow's only Node
+          # consumer, so no other gate is affected by the major change.
+          node-version: "22"
 
       - name: Install integrity-pinned markdownlint-cli2
         run: npm ci --no-audit --no-fund --ignore-scripts
 
       - name: Assert the resolved tool version
         env:
-          PINNED_CLI: "0.17.2"
-          PINNED_MARKDOWNLINT: "0.37.4"
+          PINNED_CLI: "0.23.3"
+          PINNED_MARKDOWNLINT: "0.41.1"
         run: |
           set -euo pipefail
           # Read what npm actually installed, from each package's own metadata.

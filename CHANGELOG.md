@@ -222,6 +222,38 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- **markdownlint re-pinned: `markdownlint-cli2` 0.17.2 to 0.23.3 (bundling markdownlint 0.37.4 to 0.41.1),
+  and CI `node-version` 20 to 22.** Step two of the agreed measure-then-bind sequence: the 428 `MD060`
+  findings the candidate produced were cleared by the delimiter-spacing pass *before* the pin moved, so this
+  lands green instead of being weakened on its landing day. Supersedes dependabot's #40, proven to carry the
+  identical version transition (dependency `0.23.3`, CLI `0.23.3`, engine `0.41.1`, lockfile 1385 lines both
+  sides, and #40 touches only the two package files). #40 is closed rather than merged because it sits behind
+  main and cannot see the delimiter fix it now depends on.
+
+  Node moved because both packages declare `engines.node: ">= 22"`; `npm install` under the repository's
+  local Node 20 emitted `EBADENGINE` rather than hiding it. `markdown-lint` is the workflow's only Node
+  consumer, so no other gate is affected, and the verdict still comes from the integrity-pinned CLI asserted
+  by exact string rather than from the runtime.
+
+  Re-measured on the new lock: **88 entries, 0 without an integrity hash, 0 declaring install scripts** --
+  `npm ci --ignore-scripts` still skips nothing legitimate. `npm install` rewrote the dependency to a caret
+  range; that was reverted to exact `0.23.3`, because a range silently widens what the lockfile is trusted to
+  reproduce.
+
+  The guard was tightened, not merely re-numbered. `tests/test_markdown_lint_gate.py` now also asserts the
+  **bundled engine** version (the two pin sites must move together, or an upgrade installs one and checks the
+  other), forbids a floating range in `devDependencies`, and pins `MD060` at default so the next new rule
+  cannot be answered by disabling it. Mutation-proved, each restored byte-identically: dependency widened to
+  a range = 1 failed; workflow engine constant left at the old value = 1 failed; `MD060: false` = 1 failed.
+  The coupling was demonstrated *before* the fix as well: bumping the lock while the constant still read
+  `0.17.2` failed `test_dependency_install_is_integrity_pinned_and_script_free` (1 failed, 8 passed), which is
+  precisely the drift that guard exists to catch.
+
+  Verified with the real tool after `npm ci`: 49 tracked files, **0 issues**. `make check` rc 0, 172 tests
+  (was 171), deny-scan no violations. `QODER.md` §7.8 needed no edit -- it deliberately names no version
+  numbers. Older entries here that state "Node is pinned to major 20" or cite `0.17.2 (0.37.4)` are left as
+  written: they record what shipped on that date, and this entry supersedes them.
+
 - Table delimiter rows are now spaced to match their header rows (`|---|---|` → `| --- | --- |`) across
   the corpus: **60 rows in 21 files**, `+60/−60` exactly. This is step one of upgrading the pinned
   markdownlint, measured before binding. `MD060/table-column-style` does not exist in the pinned
