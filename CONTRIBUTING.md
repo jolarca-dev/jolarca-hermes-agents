@@ -20,6 +20,27 @@ SOC 2 Type II, ISO 27001:2022, and GDPR controls.
 make check    # lint + validate + deny-patterns
 ```
 
+## Local hooks
+
+`.pre-commit-config.yaml` declares gitleaks, private-key, YAML, merge-conflict and
+large-file checks, `trailing-whitespace`, `end-of-file-fixer`, and ruff. Hooks are **per
+clone** — they run nowhere until someone installs them:
+
+```bash
+python -m pip install pre-commit
+pre-commit install            # enable the git hook for this clone
+pre-commit run --all-files    # run every hook now, without committing
+```
+
+No CI job runs pre-commit, so the binding gates are still the `lint`, `test` and
+`security` required contexts plus the supplementary jobs. `trailing-whitespace` carries
+`--markdown-linebreak-ext=md` because three governance documents open their
+`**Status:**` / `**Date:**` headers with markdown hard line breaks (two trailing spaces);
+without that argument, installing the hook silently fuses that compliance metadata into
+one rendered paragraph. The argument is required by `tests/test_precommit_hook_safety.py`.
+
+Never bypass a hook with `--no-verify`; fix the finding instead.
+
 ## Agent changes
 
 When adding or modifying an agent:

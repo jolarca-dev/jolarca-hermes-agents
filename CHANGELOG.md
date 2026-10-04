@@ -7,6 +7,32 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `tests/test_precommit_hook_safety.py`, plus the mitigation it pins: `.pre-commit-config.yaml`'s
+  `trailing-whitespace` hook now carries `args: [--markdown-linebreak-ext=md]`. The config had declared
+  the hook with no arguments while three `Status: Accepted` governance docs open their metadata headers
+  with two-space markdown hard breaks -- **5 lines**, in `docs/capability-map.md:3-4`,
+  `docs/control-matrix.md:3-4`, `docs/target-tree.md:3`. Installing the hook and committing any edit to
+  those files would have stripped them, and because the *next* metadata line has no hard break of its
+  own, `**Status:** Accepted **Date:** 2026-09-30 **ADR prefix:** HERMES-` collapses into one rendered
+  paragraph. The damage was latent, not theoretical: nothing installed the hook, so nothing exercised it.
+
+  The guard requires the argument **and forbids replacing it with a `docs/` exclude** -- an exclude would
+  delete real trailing-whitespace coverage across the whole governance corpus to protect five lines. It
+  also fails if the hard-break construct disappears, so the mitigation cannot quietly become decorative,
+  and it asserts every declared hook `rev` is an exact version rather than a branch.
+
+  Measured, not assumed (`pre-commit 4.6.2`, hook installed in this clone, then probed):
+  `pre-commit run trailing-whitespace --all-files` **Passed and modified nothing** -- the 5 breaks
+  survived at 2/2/1. On a probe file the hook exited 1 and fixed it: two-space breaks preserved, three
+  spaces normalised to two, single spaces and tabs still stripped. So the mitigation protects the
+  construct without exempting anything.
+
+  Documentation gap closed too: `CONTRIBUTING.md` never mentioned pre-commit at all, so installation was
+  undiscoverable. It now carries the install and manual-run commands and states that **no CI job runs
+  pre-commit** -- the binding gates remain the three required contexts plus the supplementary jobs.
+  `QODER.md` §7.10 and `docs/target-tree.md` said the hooks were "config only / not installed"; hooks
+  are per clone, so both now say that precisely instead of describing one working copy as fact.
+
 - `Makefile`: a `markdown-lint` target, and `QODER.md` §7.2 now documents it. Until this change the
   docs gate existed in CI but **nowhere in the contract's command list** -- "markdown" appeared nowhere
   in §7.2 -- so a contributor obeying the file had no way to run the gate locally and met it cold in a

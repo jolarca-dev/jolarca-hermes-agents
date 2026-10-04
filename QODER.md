@@ -352,8 +352,10 @@ drive-by is obsolete.)
   files, or Terraform state (`*.tfstate`, `*.tfstate.*`) — see `SECURITY.md`.
 - `.pre-commit-config.yaml` declares gitleaks, `detect-private-key`,
   `check-yaml`, `check-merge-conflict`, `check-added-large-files`,
-  `trailing-whitespace`, `end-of-file-fixer`, and ruff. Those hooks are **config
-  only** and are not installed in this clone, so they gate nothing locally.
+  `trailing-whitespace`, `end-of-file-fixer`, and ruff. Hooks are **per clone**: they run
+  only in a working copy where someone has run `pre-commit install` (setup and the manual
+  command are in `CONTRIBUTING.md`). No CI job runs pre-commit, so the binding gates stay
+  the `lint`, `test` and `security` required contexts plus the supplementary jobs.
   Secret scanning **runs** in the CI `secrets-scan` job — checksum-verified gitleaks CLI
   over the full history, failing the build on a hit — but it is **not a required status
   check**. Branch protection requires only `lint`, `test` and `security` (verified against
@@ -362,10 +364,16 @@ drive-by is obsolete.)
   required context is an operator change in the control plane, not an edit in this repo.
   Do not substitute `gitleaks-action`: it requires a `GITLEAKS_LICENSE` secret for
   organisation-owned repositories and fails on every run.
-- Beware the `trailing-whitespace` hook before installing it. Governance docs
-  end their `**Status:**` / `**Date:**` header lines with two spaces, a
-  deliberate markdown hard line break; installing the hooks strips it and
-  silently restyles every such header.
+- The `trailing-whitespace` hook carries `--markdown-linebreak-ext=md`, because three
+  governance docs (`docs/capability-map.md`, `docs/control-matrix.md`,
+  `docs/target-tree.md`) open their `**Status:**` / `**Date:**` headers with two-space
+  markdown hard breaks — five lines. Without the argument, installing the hook and
+  committing any edit to those files fuses the compliance metadata into one rendered
+  paragraph, because the following metadata line has no hard break of its own. Measured
+  behaviour with the argument present: two-space breaks survive, three spaces normalise to
+  two, single spaces and tabs are still stripped — the construct is protected without
+  exempting the corpus. `tests/test_precommit_hook_safety.py` requires the argument and
+  forbids swapping it for a `docs/` exclude, which would drop real coverage instead.
 - Never suggest `--no-verify`, an unsigned commit, or bypassing a hook.
 - This is a **public** repository. Assume every line is read by a customer, a
   competitor, and an auditor. No infrastructure identifiers, hostnames, IP
@@ -466,3 +474,4 @@ or silently ignored.
 | 2026-10-04 | §7.8 changelog convention changed to one **undated** heading per category, because the dated form was the root cause of the 15 MD024 findings; markdownlint is now enforced by the supplementary CI `markdown-lint` job, so §7.8 no longer calls it a convention | Agent (proposed, PR review) |
 | 2026-10-04 | §7.7 names the fourth CI-integrity suite and `tests/test_dependabot_coverage.py`; §7.12 gains the unmonitored-manifest drift row; §7.6 citations in the previous row were wrong -- the changelog and markdownlint conventions live in §7.8, §7.6 is validation loci | Agent (proposed, PR review) |
 | 2026-10-04 | §7.2 documents `make markdown-lint` and records that `make check` stays Node-free by decision, both now pinned by `tests/test_markdown_lint_gate.py`; §7.5 corrected (grant/policy parity has been machine-enforced since PR #29, as a one-way subset) and §7.6 corrected (the dead `load_schema()` helper and overclaiming docstring were removed in PR #24) | Agent (proposed, PR review) |
+| 2026-10-04 | §7.10 rewritten on pre-commit: hooks are **per clone**, `trailing-whitespace` now carries `--markdown-linebreak-ext=md` with the measured behaviour recorded, and the install/run commands moved into `CONTRIBUTING.md`, which previously never mentioned pre-commit | Agent (proposed, PR review) |
