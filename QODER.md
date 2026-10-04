@@ -74,7 +74,7 @@ a changelog entry that this repository's doctrine requires.
 Reframe imperatives as verifiable goals:
 
 | Task as given | Reframe to |
-|---|---|
+| --- | --- |
 | "Add validation" | "Write failing tests for invalid input, then make them pass" |
 | "Fix the bug" | "Write a test that reproduces it, then make it pass" |
 | "Refactor X" | "Prove the gate is green before and after" |
@@ -132,7 +132,7 @@ records that this repository is not the runtime for the Baltic pilot.
 Re-verify before relying on this; it ages.
 
 | Property | Value |
-|---|---|
+| --- | --- |
 | Python | 3.12 (`.venv/bin/python`), `requires-python >=3.12` |
 | Runtime deps | none declared; scripts import `pyyaml` only |
 | Test deps | `pytest`, `pyyaml`, `jsonschema` |
@@ -414,7 +414,7 @@ Surface it; do not silently repair it, and do not silently ignore it. Known
 classes, each with the check that detects it:
 
 | Drift class | Detect with |
-|---|---|
+| --- | --- |
 | Matrix cites a CI job that `ci.yml` does not define | `tests/test_ci_control_wiring.py` (automated); or diff job names in `docs/control-matrix.md` against `jobs:` in `ci.yml` |
 | Enforcement script exists, passes, but no job runs it | `tests/test_ci_control_wiring.py` (automated); or grep each `scripts/check_*.py` basename in `ci.yml` |
 | A required check cannot fail (swallowed exit status, `continue-on-error`) | `tests/test_ci_gates_are_real.py` (automated); or read each `run:` step for a swallow |
@@ -463,7 +463,7 @@ or silently ignored.
 ## Revision History
 
 | Date | Change | Authority |
-|---|---|---|
+| --- | --- | --- |
 | 2026-10-03 | Initial behavioural contract for AI-assisted changes | Agent (proposed, pending operator acceptance) |
 | 2026-10-03 | Rebased onto merged `main` after PR #19 (eight controls wired) and PR #20 (`security` gate made binding): §7.9 open item resolved, §5 and §7.12 extended to cover gates that cannot fail, §7.11 records the squash-merge convention and the CHANGELOG conflict trap | Agent (proposed, pending operator acceptance) |
 | 2026-10-03 | Updated for the CI-hardening change: job count 14 → 15 with a `secrets-scan` job, §7.10 no longer claims secret scanning is absent (and warns on the `trailing-whitespace` / hard-break conflict), §7.7 names the third guard suite, §7.12 gains unpinned-action and missing-permissions rows | Agent (proposed, PR review) |
@@ -475,3 +475,4 @@ or silently ignored.
 | 2026-10-04 | §7.7 names the fourth CI-integrity suite and `tests/test_dependabot_coverage.py`; §7.12 gains the unmonitored-manifest drift row; §7.6 citations in the previous row were wrong -- the changelog and markdownlint conventions live in §7.8, §7.6 is validation loci | Agent (proposed, PR review) |
 | 2026-10-04 | §7.2 documents `make markdown-lint` and records that `make check` stays Node-free by decision, both now pinned by `tests/test_markdown_lint_gate.py`; §7.5 corrected (grant/policy parity has been machine-enforced since PR #29, as a one-way subset) and §7.6 corrected (the dead `load_schema()` helper and overclaiming docstring were removed in PR #24) | Agent (proposed, PR review) |
 | 2026-10-04 | §7.10 rewritten on pre-commit: hooks are **per clone**, `trailing-whitespace` now carries `--markdown-linebreak-ext=md` with the measured behaviour recorded, and the install/run commands moved into `CONTRIBUTING.md`, which previously never mentioned pre-commit | Agent (proposed, PR review) |
+| 2026-10-04 | Table delimiter rows in this document re-spaced from tight to spaced form to satisfy `MD060` in markdownlint 0.41; 4 rows changed, no text changed, measured 428 to 0 findings | Agent (accepted, PR review) |

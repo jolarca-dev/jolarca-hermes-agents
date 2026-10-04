@@ -222,6 +222,33 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Table delimiter rows are now spaced to match their header rows (`|---|---|` → `| --- | --- |`) across
+  the corpus: **60 rows in 21 files**, `+60/−60` exactly. This is step one of upgrading the pinned
+  markdownlint, measured before binding. `MD060/table-column-style` does not exist in the pinned
+  **markdownlint 0.37.4** but ships in **0.41.1** (dependabot's #40), where its `style: "any"` default
+  requires each table's column pipes to be internally consistent -- this corpus writes spaced header rows
+  over tight delimiter rows, so upgrading produced **428 findings in 21 files** on a doc set the current
+  gate reports clean. Re-spacing the delimiter rows clears it without weakening anything: verified
+  **428 → 0** with the 0.41.1 runner and still **0** with the pinned 0.17.2, so this lands green under the
+  gate as it stands today. Structural proofs, each stated against the measurement it actually came from: the
+  spacing pass alone replaced **60 delimiter rows 1:1** with files 49, lines 4277 and the word **multiset**
+  identical before and after, only `.md` files touched, and the 5 governance-header hard breaks unchanged.
+  The commit is wider than the pass because it also carries this entry, two revision rows and the new
+  structural guard: `+148/−60` over 23 files, markdown words 27658 → 28091, and all 60 removed lines are
+  delimiter rows -- zero non-delimiter lines removed. No rule was disabled and no baseline
+  added -- MD060's configuration surface (`aligned_delimiter`,
+  `style: aligned|any|compact|tight`) was read from the installed package rather than recalled. The upgrade
+  itself follows separately: package files, `PINNED_CLI`/`PINNED_MARKDOWNLINT`, and CI `node-version`, which
+  0.41.1 requires at **>= 22** while we pin **20**.
+
+  **Self-inflicted, caught before push, and now guarded:** the first revision row written into `QODER.md`
+  put literal pipe-dashes inside a table cell, producing a 7-cell row in a 3-cell table -- `MD056` plus
+  seven `MD060` findings -- and it made the **currently pinned** linter fail as well
+  (`make markdown-lint` exit 2). The required contexts would not have caught it, because no test asserted
+  the shape of the revision tables. The row was reworded without pipes, and
+  `tests/test_markdown_table_shape.py` now asserts that every row of the `QODER.md` and
+  `docs/target-tree.md` revision tables has exactly three cells.
+
 - **markdownlint is now a CI gate.** `.github/workflows/ci.yml` gained a `markdown-lint` job running
   `markdownlint-cli2` against the committed `.markdownlint.json` over `git ls-files '*.md'`. It is
   **supplementary**, the same posture as `secrets-scan`: it reports, and promotion to a required

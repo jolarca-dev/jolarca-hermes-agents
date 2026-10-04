@@ -25,7 +25,7 @@ enforcement, human gates at publication boundaries).
 *Threat: An attacker impersonates a legitimate entity to gain unauthorised access.*
 
 | ID | Threat | Mitigation | Control | Severity |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | S1 | Attacker impersonates a tenant to access another tenant's data | Tenant-scoped index partitioning in `rag` agent; per-tenant access tokens | **C2** (tenant isolation) | High |
 | S2 | Attacker forges an identity tag to bypass agent policy | Identity tag uniqueness enforced by CI (`validate_agents.py`); tags are never reused (HERMES-0001) | **C8** (deny patterns), HERMES-0001 | Medium |
 | S3 | Attacker impersonates the orchestrator to issue unauthorised agent calls | Orchestrator is the sole entry point; agents only accept delegated calls from orchestrator; deny-pattern scan blocks unauthorised references | **C8**, **C9** | High |
@@ -37,7 +37,7 @@ enforcement, human gates at publication boundaries).
 *Threat: An attacker modifies data, configurations, or agent behaviour without authorisation.*
 
 | ID | Threat | Mitigation | Control | Severity |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | T1 | Attacker modifies agent policy.yaml to weaken deny rules | All changes require PR through protected branch; CI `agent-policy-guard` validates policy structure; branch protection requires status checks | **C12** (injection defence), branch protection | High |
 | T2 | Attacker injects false provenance citations into generated content | `editorial` agent verifies provenance completeness; missing or malformed citations cause automatic rejection | **C3** (editorial approval), **C4** (provenance) | High |
 | T3 | Attacker modifies approved-source registry to include malicious sources | Source registry in `policies/approved_sources.md` requires PR review; `rag` agent validates against allow-list at retrieval time | **C1** (approved sources) | High |
@@ -51,7 +51,7 @@ enforcement, human gates at publication boundaries).
 *Threat: An attacker (or authorised user) performs an action and later denies it.*
 
 | ID | Threat | Mitigation | Control | Severity |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | R1 | Operator publishes content and later denies authorship | Every publication carries editorial approval record with identity tag; 7-year retention of approval records | **C3** (editorial approval), **C14** | High |
 | R2 | Operator modifies agent configuration and denies the change | All changes go through PR (git history); `audit` agent logs all human overrides with identity tag | **C17** (override audit) | High |
 | R3 | Agent generates harmful content with no traceable source | Every claim must carry provenance citation (C4); provenance records include agent identity tag, source, and timestamp | **C4** (provenance) | Medium |
@@ -64,7 +64,7 @@ enforcement, human gates at publication boundaries).
 *Threat: Sensitive data is exposed to unauthorised parties.*
 
 | ID | Threat | Mitigation | Control | Severity |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | I1 | PII leaks into logs, telemetry, or public output | `consent` agent redacts PII before logging; `pii-scan` CI job validates no PII in agent policies; PII retention limited to 30 days | **C11** (PII redaction) | Critical |
 | I2 | Tenant A's data is accessible to Tenant B | `rag` agent enforces tenant-scoped index access; cross-tenant access denied by policy | **C2** (tenant isolation) | Critical |
 | I3 | Internal or confidential data appears in public output | Data classification flow requires editorial gate before publication; `website` agent verifies approval per artefact | **C3** (editorial approval), **C6** (accessibility) | High |
@@ -81,7 +81,7 @@ enforcement, human gates at publication boundaries).
 *Threat: An attacker or system failure prevents legitimate use of the agent fleet.*
 
 | ID | Threat | Mitigation | Control | Severity |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | D1 | Runaway agent exhausts token budget | `orchestrator` enforces per-request (100k), per-day (1M tokens), and cost ($50/day) ceilings; `budget-check` CI validates limits exist | **C15** (budget) | High |
 | D2 | LLM provider outage prevents all generation | Kill-switch circuit breaker in `orchestrator`; graceful degradation when provider unavailable; `kill-switch-test` CI validates circuit breaker exists | **C16** (kill-switch) | High |
 | D3 | Prompt injection causes infinite loop or excessive API calls | `guardrails` agent detects and blocks injection; orchestrator enforces request-level budget ceiling | **C12**, **C15** | Medium |
@@ -94,7 +94,7 @@ enforcement, human gates at publication boundaries).
 *Threat: An attacker or agent gains capabilities beyond its authorised scope.*
 
 | ID | Threat | Mitigation | Control | Severity |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | E1 | Agent writes directly to mission platform databases | Orchestrator policy denies mission DB writes; deny-pattern scan blocks mission-prefixed references across all agents | **C8** (no DB writes) | Critical |
 | E2 | Agent bypasses editorial gate to publish without approval | Editorial gate enforced by policy deny rules; `website` agent verifies approval per artefact before composition | **C3** (editorial approval) | Critical |
 | E3 | Lower-layer agent accesses higher-layer capabilities | Layered dependency graph enforces capability boundaries; agents can only delegate to agents in higher layers | HERMES-0001 (build order) | High |
@@ -107,7 +107,7 @@ enforcement, human gates at publication boundaries).
 ## Control Coverage Matrix
 
 | Control | Threats mitigated |
-|---|---|
+| --- | --- |
 | C1 (approved sources) | T3, I7, E4 |
 | C2 (tenant isolation) | S1, I2, E6 |
 | C3 (editorial approval) | T2, R1, R4, I3, E2 |
@@ -134,7 +134,7 @@ No control exists without a threat justification.
 ## Unmitigated Risks
 
 | ID | Risk | Current State | Remediation | Owner |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | UR1 | Supply chain attack via compromised LLM provider | No provider selected; risk is theoretical until provider is onboarded | Model policy requires DPIA + security certification before any data is sent (C13) | orchestrator |
 | UR2 | Zero-day vulnerability in agent framework dependencies | Dependabot configured; no runtime dependencies yet (agents are declarative YAML) | When runtime code is added, add dependency scanning to CI | observability |
 | UR3 | Credential leak via agent misconfiguration | No credentials in agent configs; `.gitleaksignore` configured; gitleaks in pre-commit | Add secret scanning to CI when runtime code is added | guardrails |
@@ -167,5 +167,5 @@ No control exists without a threat justification.
 ## Revision History
 
 | Date | Change | Authority |
-|---|---|---|
+| --- | --- | --- |
 | 2026-10-01 | Initial STRIDE threat model (26 threats, 17 controls covered) | Agent (accepted by solo operator) |

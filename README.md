@@ -32,7 +32,7 @@ Layer 6 ─── website ─── (editorial + accessibility gates)
 ```
 
 | Agent | Identity tag | Classification | Gate |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | orchestrator | `agent:jolarca:orchestrator` | internal | — |
 | guardrails | `agent:jolarca:guardrails` | internal | blocks_all |
 | consent | `agent:jolarca:consent` | restricted | blocks_all |

@@ -52,7 +52,7 @@ controls from `docs/control-matrix.md` and compliance frameworks (SOC 2,
 ISO 27001, GDPR).]
 
 | Aspect | SOC 2 | ISO 27001 | GDPR |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | [aspect] | [control ref] | [control ref] | [article ref] |
 
 ---
@@ -60,5 +60,5 @@ ISO 27001, GDPR).]
 ## Revision History
 
 | Date | Change | Authority |
-|---|---|---|
+| --- | --- | --- |
 | YYYY-MM-DD | Initial ADR | [authority] |

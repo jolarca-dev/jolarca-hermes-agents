@@ -130,7 +130,7 @@ any agent calls it:
 ## Compliance Mapping
 
 | Aspect | SOC 2 | ISO 27001 | GDPR |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Mission/marketplace boundary (§1) | CC3.2, CC9.2 | A.5.9, A.5.19 | Art. 5(1)(b), Art. 44 |
 | Self-hosted Baltic pilot is mission-side (§2) | CC6.1 | A.5.23 | Art. 44 (residency by construction) |
 | Path A self-hosted assessment (§3) | CC9.2, CC6.1 | A.5.19, A.5.21, A.12.6 | Art. 28(1), Art. 32 |
@@ -142,7 +142,7 @@ any agent calls it:
 ## Revision History
 
 | Date | Change | Authority |
-|---|---|---|
+| --- | --- | --- |
 | 2026-10-01 | Initial ADR (proposed) | Agent (pending operator acceptance on merge) |
 | 2026-10-03 | §4 corrected to name `vendor-risk-check` as the enforcement locus for the null-provider invariant. When this ADR was written, `check_vendor_risk.py` existed and passed locally but was invoked by no CI job, so the assertion it describes was not actually enforced; that job is now wired | Agent (proposed, pending operator acceptance) |
 | 2026-10-03 | Status **Proposed → Accepted**. In-repo claims re-verified first: `model_policy.provider` is `null` for 12/12 agents, `vendor-risk-check` exists and runs `scripts/check_vendor_risk.py`, and `deny-pattern-scan` fails CI on a mission-platform token. C13 **remains open by design** — accepting this ADR does not close it, and no provider was registered | Agent (accepted on operator instruction) |

@@ -108,7 +108,7 @@ scripts. `docs/target-tree.md` now shows the single `ci.yml` job model and inclu
 ## Compliance Mapping
 
 | Aspect | SOC 2 | ISO 27001 | GDPR |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Injection eval fixtures (C12) | CC6.1, CC7.2 | A.8.8 | Art. 32 |
 | PII eval fixtures (C11) | CC6.1, CC7.2 | A.8.12 | Art. 32 |
 | Tool register (least privilege) | CC6.1, CC6.2 | A.5.15, A.8.2 | Art. 5(1)(c) |
@@ -119,7 +119,7 @@ scripts. `docs/target-tree.md` now shows the single `ci.yml` job model and inclu
 ## Revision History
 
 | Date | Change | Authority |
-|---|---|---|
+| --- | --- | --- |
 | 2026-10-01 | Initial ADR (proposed) | Agent (pending operator acceptance on merge) |
 | 2026-10-03 | Corrected §3: grants total 40 → 41 (the orchestrator gained `log_decision` after this ADR was drafted) and the now-resolved mismatch observation dropped from its description; §Risks mitigation upgraded from declarative precedence to the automated register-consistency guard | Agent (proposed, PR review) |
 | 2026-10-03 | Status **Proposed → Accepted**. In-repo claims re-verified first: 12 agents, all `provider: null`, eval cases schema-validated in the required `test` job, `adversarial-evals` still supplementary, branch protection still `lint`/`test`/`security`, and the register figures now re-derived by the guard. The out-of-repo claim (§Context, three registered `ai-llm` candidates being external SaaS) was not independently re-verified here — it originates in `jolarca-vendor` records | Agent (accepted on operator instruction) |

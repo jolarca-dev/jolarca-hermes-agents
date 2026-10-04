@@ -21,7 +21,7 @@ the [jolarca-dev security policy](https://github.com/jolarca-dev/.github/blob/ma
 ## Response Timeline
 
 | Severity | Response | Remediation |
-|---|---|---|
+| --- | --- | --- |
 | Critical | Immediate | Same-day patch |
 | High | Within 24 hours | Within 72 hours |
 | Medium | Within 72 hours | Next scheduled review |

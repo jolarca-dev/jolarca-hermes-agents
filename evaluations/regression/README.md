@@ -65,5 +65,5 @@ snake_case deny actions, never literal mission-platform resource strings.
 ## Revision History
 
 | Date | Change | Authority |
-|---|---|---|
+| --- | --- | --- |
 | 2026-10-01 | Expanded trigger to a closed, root-caused incident; added derivation rules and red-before/green-after acceptance criterion; recorded verified empty issue state | Agent (PR review) |
