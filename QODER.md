@@ -154,7 +154,7 @@ make test           # pytest tests/ agents/ -v
 make validate       # validate_agents.py + JSON Schema well-formedness
 make evals          # check_eval_coverage.py (C8-C12 fixtures)
 make deny-patterns  # scripts/check_deny_patterns.py
-make markdown-lint  # tracked markdown, via the CI-pinned tool; needs `npm ci` first
+make markdown-lint  # tracked markdown, via the CI-pinned tool; needs Node 22 + `npm ci` first
 ```
 
 `make check` does **not** run the tests. Run `make check` and `make test` both
@@ -163,7 +163,10 @@ before claiming a change is green.
 `make check` also does **not** run `make markdown-lint`, deliberately: the pre-merge
 Python loop must not acquire an npm dependency. Measured -- `make check` exits 0 with
 `node_modules` removed, while `make markdown-lint` fails loudly in that state rather
-than silently passing. The docs gate is bound in CI by the supplementary
+than silently passing. The Node major the tool requires is declared in `package.json` under `engines.node`,
+and `tests/test_markdown_lint_gate.py` asserts that declaration matches the CI `node-version`, so the
+runtime a contributor installs and the runtime CI uses cannot drift apart unnoticed. The docs
+gate is bound in CI by the supplementary
 `markdown-lint` job regardless, so a contributor who skips the local target still gets
 an honest verdict before merge. `tests/test_markdown_lint_gate.py` pins both facts: the
 local recipe must mirror the CI job's tool, config and tracked-file scope, and
@@ -476,3 +479,4 @@ or silently ignored.
 | 2026-10-04 | §7.2 documents `make markdown-lint` and records that `make check` stays Node-free by decision, both now pinned by `tests/test_markdown_lint_gate.py`; §7.5 corrected (grant/policy parity has been machine-enforced since PR #29, as a one-way subset) and §7.6 corrected (the dead `load_schema()` helper and overclaiming docstring were removed in PR #24) | Agent (proposed, PR review) |
 | 2026-10-04 | §7.10 rewritten on pre-commit: hooks are **per clone**, `trailing-whitespace` now carries `--markdown-linebreak-ext=md` with the measured behaviour recorded, and the install/run commands moved into `CONTRIBUTING.md`, which previously never mentioned pre-commit | Agent (proposed, PR review) |
 | 2026-10-04 | Table delimiter rows in this document re-spaced from tight to spaced form to satisfy `MD060` in markdownlint 0.41; 4 rows changed, no text changed, measured 428 to 0 findings | Agent (accepted, PR review) |
+| 2026-10-04 | §7.2 names the Node major `make markdown-lint` needs and records that the requirement is declared in `package.json` `engines.node`, with `tests/test_markdown_lint_gate.py` asserting it matches the CI `node-version` | Agent (proposed, PR review) |

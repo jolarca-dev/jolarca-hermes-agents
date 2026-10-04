@@ -193,6 +193,34 @@ def test_md060_stays_enabled_after_the_upgrade():
     )
 
 
+def test_package_json_declares_the_node_version_the_job_requires():
+    """The runtime a tool needs and the runtime CI gives it must not drift apart silently.
+
+    Why this exists: markdownlint-cli2 0.23.3 and the markdownlint 0.41.1 it bundles both declare
+    `engines.node: ">= 22"`, so CI had to move from Node 20 to 22 -- while this repository's own
+    `package.json` said nothing about it. A contributor on an older Node therefore saw only an
+    `EBADENGINE` warning from npm, and nothing in the tree recorded the requirement except a workflow
+    comment. Declaring it makes the requirement discoverable from the manifest that actually needs it.
+
+    Asserts the major matches the CI pin rather than hardcoding a number, so a deliberate Node bump in
+    one place fails until the other is updated too.
+    """
+    declared = json.loads((ROOT / "package.json").read_text(encoding="utf-8")).get("engines")
+    assert declared, "package.json declares no engines field, yet the markdown-lint job needs a Node major"
+    want = re.fullmatch(r">=\s*(\d+)", str(declared.get("node", "")))
+    assert want, f"engines.node must look like '>= N', got {declared.get('node')!r}"
+
+    ci_major = None
+    for step in _job()["steps"]:
+        if "setup-node" in str(step.get("uses", "")):
+            ci_major = str(step.get("with", {}).get("node-version", "")).split(".")[0]
+    assert ci_major, "no actions/setup-node step found in the markdown-lint job"
+    assert want.group(1) == ci_major, (
+        f"package.json requires Node >= {want.group(1)} but CI installs {ci_major}; the markdown-lint "
+        f"job is the only Node consumer, so these two are the same requirement"
+    )
+
+
 def test_guard_is_not_vacuous():
     job = _job()
     assert len(job["steps"]) >= 3, f"markdown-lint job has only {len(job['steps'])} steps"

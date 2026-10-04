@@ -20,6 +20,21 @@ SOC 2 Type II, ISO 27001:2022, and GDPR controls.
 make check    # lint + validate + deny-patterns
 ```
 
+## Markdown linting
+
+`make markdown-lint` runs the same integrity-pinned tool the CI `markdown-lint` job runs. It needs
+**Node 22 or newer** — declared in `package.json` under `engines.node`, because markdownlint 0.41.1
+requires it — plus the lockfile install:
+
+```bash
+npm ci --no-audit --no-fund --ignore-scripts
+make markdown-lint    # 49 tracked markdown files, 0 findings expected
+```
+
+`make check` deliberately does **not** invoke it, so the pre-merge Python loop stays free of any npm
+dependency. Under an older Node, npm reports `EBADENGINE`; the tool may still run, but CI will not match
+what you checked locally, so install the declared major rather than trusting the warning.
+
 ## Local hooks
 
 `.pre-commit-config.yaml` declares gitleaks, private-key, YAML, merge-conflict and
