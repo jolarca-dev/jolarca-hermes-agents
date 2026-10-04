@@ -27,7 +27,7 @@ A source is approved when:
 ## Registry
 
 | Source ID | Source Type | Description | Classification | Approved |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | `jolarca-docs` | approved_document | Fleet compliance documentation (jolarca-docs repo) | internal | 2026-09-30 |
 | `jolarca-control` | approved_document | Governance control plane (jolarca-control repo) | internal | 2026-09-30 |
 | `jolarca-security` | approved_document | Security policies and procedures | internal | 2026-09-30 |
@@ -54,5 +54,5 @@ To remove a source:
 ## Revision History
 
 | Date | Change | Authority |
-|---|---|---|
+| --- | --- | --- |
 | 2026-09-30 | Initial registry (3 sources) | Agent (pending review) |

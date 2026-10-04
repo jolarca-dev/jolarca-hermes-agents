@@ -36,7 +36,7 @@ agent:jolarca:<module-id>
 **Allocated tags:**
 
 | Module id | Identity tag |
-|---|---|
+| --- | --- |
 | orchestrator | `agent:jolarca:orchestrator` |
 | guardrails | `agent:jolarca:guardrails` |
 | consent | `agent:jolarca:consent` |
@@ -91,7 +91,7 @@ Parallelizable within layers:
 Three types of human gates are defined:
 
 | Gate type | Meaning | Example |
-|---|---|---|
+| --- | --- | --- |
 | `blocks_all` | Agent cannot proceed without human approval | guardrails (doctrinal escalation) |
 | `editorial` | Output requires human editorial approval before publication | content, translation, seo |
 | `blocks_release` | Agent's validation must pass before release | accessibility (WCAG gate) |
@@ -125,7 +125,7 @@ these gates map to team-based approval workflows.
 ## Compliance Mapping
 
 | Control | SOC 2 | ISO 27001 | GDPR |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Identity tags | CC7.2 (audit trail) | A.8.32 (audit logging) | Art. 30 (records) |
 | Build order | CC6.1 (access control) | A.8.13 (info transfer) | Art. 5(1)(b) |
 | Human gates | CC8.1 (change mgmt) | A.8.32 (audit logging) | Art. 9 (special category) |
@@ -135,5 +135,5 @@ these gates map to team-based approval workflows.
 ## Revision History
 
 | Date | Change | Authority |
-|---|---|---|
+| --- | --- | --- |
 | 2026-09-30 | Initial ADR | Agent (accepted by solo operator) |

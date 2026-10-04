@@ -64,7 +64,7 @@ A model provider is approved when **all** of the following are satisfied:
 ## Provider Registry
 
 | Provider ID | Provider Name | Model | DPA Signed | DPIA Completed | Approved |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | *(none yet)* | — | — | — | — | — |
 
 No provider is approved. Do not send data to any LLM until a row appears
@@ -76,7 +76,7 @@ When a provider is approved, each agent will be assigned a model based on
 its role:
 
 | Agent | Model Tier | Rationale |
-|---|---|---|
+| --- | --- | --- |
 | orchestrator | none | Delegates; does not call models directly |
 | guardrails | inspection | Pattern matching only; no generation |
 | consent | none | Redaction logic; no generation |
@@ -128,5 +128,5 @@ A new or updated DPIA is required when:
 ## Revision History
 
 | Date | Change | Authority |
-|---|---|---|
+| --- | --- | --- |
 | 2026-10-01 | Initial model policy (no provider selected) | Agent (accepted by solo operator) |

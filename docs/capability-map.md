@@ -19,7 +19,7 @@ CI enforcement. **No agent scaffold begins until this map is approved.**
 ## Capability Table
 
 | Module id | Identity tag | Responsibility | Depends on | Data classification | Human gate |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | `orchestrator` | `agent:jolarca:orchestrator` | Routing, delegation, budget/cost caps, kill-switch | — | internal | — |
 | `guardrails` | `agent:jolarca:guardrails` | Prompt-injection defence, deny-list enforcement, doctrine/pastoral escalation | orchestrator | internal | blocks all |
 | `rag` | `agent:jolarca:rag` | Approved-source retrieval, tenant/locale-scoped index access | guardrails | confidential | — |
@@ -108,7 +108,7 @@ All identity tags follow the pattern `agent:jolarca:<module-id>`.
 ## Data Classification Rationale
 
 | Classification | Agents | Rationale |
-|---|---|---|
+| --- | --- | --- |
 | `internal` | orchestrator, guardrails, observability | Code/config only; no production data at rest |
 | `confidential` | rag, content, translation, editorial, audit | Processes marketplace content; may touch user-generated content but not PII at rest |
 | `restricted` | consent | Handles PII detection/redaction; must not log or retain PII |
@@ -180,6 +180,6 @@ This capability map is approved when:
 ## Revision History
 
 | Date | Change | Authority |
-|---|---|---|
+| --- | --- | --- |
 | 2026-09-30 | Initial draft | Agent (pending review) |
 | 2026-09-30 | All open questions resolved; success criteria met | Agent (accepted by solo operator) |

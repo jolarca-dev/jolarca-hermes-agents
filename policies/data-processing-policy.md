@@ -24,7 +24,7 @@ Every piece of data processed by the fleet falls into one of four
 classifications:
 
 | Classification | Definition | Examples | Agents |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | **restricted** | Data that causes severe harm if disclosed. PII, credentials, legal holds. | Email addresses, names, authentication tokens, DSAR records | consent |
 | **confidential** | Data that causes moderate harm if disclosed. Internal documents, generated content, approval records. | Drafts, retrieval results, editorial decisions, provenance records | rag, content, translation, editorial, audit |
 | **internal** | Data intended for internal use only. Operational metadata, telemetry, configuration. | Agent configs, budget logs, telemetry, deny-pattern rules | orchestrator, guardrails, observability |
@@ -97,7 +97,7 @@ Each processing activity must have a documented legal basis under GDPR
 Art. 6:
 
 | Processing Activity | Legal Basis | GDPR Article | Agent |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Content generation from approved sources | Legitimate interest | Art. 6(1)(f) | content |
 | Translation of approved content | Legitimate interest | Art. 6(1)(f) | translation |
 | SEO metadata generation | Legitimate interest | Art. 6(1)(f) | seo |
@@ -123,7 +123,7 @@ queries) in the course of marketplace content processing. When this occurs:
 ## Data Subject Rights (GDPR Chapter III)
 
 | Right | Implementation | Agent |
-|---|---|---|
+| --- | --- | --- |
 | Art. 15 — Access | DSAR workflow retrieves all data for a subject | consent |
 | Art. 16 — Rectification | Correct inaccurate data in approved sources | consent |
 | Art. 17 — Erasure | Delete PII within 30 days; generate deletion certificate | consent |
@@ -150,5 +150,5 @@ queries) in the course of marketplace content processing. When this occurs:
 ## Revision History
 
 | Date | Change | Authority |
-|---|---|---|
+| --- | --- | --- |
 | 2026-10-01 | Initial data processing policy | Agent (accepted by solo operator) |

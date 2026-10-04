@@ -31,7 +31,7 @@ the approved translation, the target locale, and the approval date.
 ### Marketplace Terms
 
 | Source (en) | Translation | Locale | Approved |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | marketplace | rinka | lt | 2026-09-30 |
 | agent | agentas | lt | 2026-09-30 |
 | fleet | laivynas | lt | 2026-09-30 |
@@ -41,7 +41,7 @@ the approved translation, the target locale, and the approval date.
 ### Technical Terms
 
 | Source (en) | Translation | Locale | Approved |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | identity tag | tapatybes zyma | lt | 2026-09-30 |
 | provenance | kilme | lt | 2026-09-30 |
 | retention | saugojimo laikas | lt | 2026-09-30 |
@@ -50,7 +50,7 @@ the approved translation, the target locale, and the approval date.
 ### Sensitive Terms (Human-Reviewed)
 
 | Source (en) | Translation | Locale | Reviewed By | Approved |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | doctrinal | doktrininis | lt | human | 2026-09-30 |
 | pastoral | ganyvistinis | lt | human | 2026-09-30 |
 | liturgical | liturginis | lt | human | 2026-09-30 |
@@ -75,5 +75,5 @@ terminology is resolved.
 ## Revision History
 
 | Date | Change | Authority |
-|---|---|---|
+| --- | --- | --- |
 | 2026-09-30 | Initial terminology registry (Lithuanian) | Agent (pending review) |

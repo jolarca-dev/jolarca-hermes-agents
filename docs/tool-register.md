@@ -19,7 +19,7 @@ document, never the reverse.
 ## Grants by agent
 
 | Agent | Classification | Gate | `tool_grants` |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | orchestrator | internal | none | `delegate_to_agent`, `check_budget`, `kill_switch`, `log_decision` |
 | guardrails | internal | blocks_all | `inspect_input`, `inspect_output`, `block_request`, `escalate_to_human` |
 | consent | restricted | blocks_all | `detect_pii`, `redact_pii`, `log_redaction`, `support_dsar` |
@@ -40,7 +40,7 @@ shared: `detect_drift` (audit, observability), `request_editorial_approval`
 ## Tool index → control mapping
 
 | Tool | Held by | Control | Purpose |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `delegate_to_agent` | orchestrator | C15 | Route work to a lower-layer agent within budget |
 | `check_budget` | orchestrator | C15 | Enforce token/cost ceilings |
 | `kill_switch` | orchestrator | C16 | Circuit breaker; halts all agent operations |
@@ -98,7 +98,7 @@ follow-up change and is no longer open.
    The two agents provably write to different sinks:
 
    | Signal | audit | observability |
-   |---|---|---|
+| --- | --- | --- |
    | Store operated on | `query_audit_log` | `query_metrics` |
    | Integrity denies | `modify_audit_log`, `delete_audit_log` | `modify_telemetry`, `suppress_incident_signals` |
    | Retention | 2555 days (7 years) | 90 days |
@@ -123,7 +123,7 @@ follow-up change and is no longer open.
    owning agents and no verb overlaps:
 
    | Agent | Verbs |
-   |---|---|
+| --- | --- |
    | website | `check_editorial_approval`, `check_accessibility_gate` — consume verdicts |
    | editorial | `approve_content`, `reject_content`, `check_provenance_completeness` — produce |
    | accessibility | `validate_wcag`, `check_alt_text`, `check_color_contrast`, `block_release` — produce |
@@ -137,7 +137,7 @@ follow-up change and is no longer open.
 ## Revision History
 
 | Date | Change | Authority |
-|---|---|---|
+| --- | --- | --- |
 | 2026-10-01 | Initial register derived from the 12 `agent.yaml` `tool_grants` | Agent (proposed, PR review) |
 | 2026-10-01 | Fixed orchestrator grant/policy mismatch; added `log_decision` to orchestrator tool_grants and `kill_switch` to policy allow.actions | Agent (PR review) |
 | 2026-10-01 | Reviewed both observations against `policy.yaml` evidence; both confirmed correct by design; opened one runtime follow-up on the shared `drift_detected` pattern name | Agent (PR review) |

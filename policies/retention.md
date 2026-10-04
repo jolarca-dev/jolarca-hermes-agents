@@ -16,7 +16,7 @@ Hermes agent fleet. Retention periods are driven by compliance requirements
 ## Retention Schedule
 
 | Data Type | Retention Period | Rationale | Agent |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Audit logs | 7 years (2555 days) | SOC 2 CC7.2, ISO 27001 A.8.10 | audit |
 | Editorial approval records | 7 years (2555 days) | SOC 2 CC8.1 | editorial |
 | Agent decision logs | 90 days | Operational debugging | all agents |
@@ -57,5 +57,5 @@ Retention may be extended when:
 ## Revision History
 
 | Date | Change | Authority |
-|---|---|---|
+| --- | --- | --- |
 | 2026-09-30 | Initial retention policy | Agent (pending review) |

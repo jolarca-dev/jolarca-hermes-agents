@@ -224,7 +224,7 @@ These files are present in every sibling repo. All of them now exist here; the
 statuses below were reconciled against `git ls-files` on 2026-10-03.
 
 | File | Status | Notes |
-|---|---|---|
+| --- | --- | --- |
 | `.editorconfig` | Present | Fleet convention |
 | `.gitleaksignore` | Present | No ignore entries required |
 | `.markdownlint.json` | Present | Enforced by the supplementary CI `markdown-lint` job (not a required context) |
@@ -243,7 +243,7 @@ statuses below were reconciled against `git ls-files` on 2026-10-03.
 Every agent directory follows the same structure:
 
 | File | Purpose | Enforced by |
-|---|---|---|
+| --- | --- | --- |
 | `README.md` | Purpose, boundaries, runbook | Human review |
 | `agent.yaml` | Identity tag, model policy, tool grants | `schemas/agent.schema.json` |
 | `policy.yaml` | Allow/deny actions, specific rules | `schemas/policy.schema.json` |
@@ -274,7 +274,7 @@ Files are created in dependency order:
 ## Revision History
 
 | Date | Change | Authority |
-|---|---|---|
+| --- | --- | --- |
 | 2026-09-30 | Initial draft | Agent (pending review) |
 | 2026-09-30 | Status promoted to Accepted (all agents scaffolded, all files present) | Agent (accepted by solo operator) |
 | 2026-10-01 | Added `evaluations/`, `schemas/eval-case.schema.json`, `docs/tool-register.md`, `scripts/check_eval_coverage.py`, `tests/test_eval_cases.py`; corrected the workflows block to the single `ci.yml` job model | Agent (proposed, PR review) |
@@ -285,3 +285,4 @@ Files are created in dependency order:
 | 2026-10-04 | `.github/dependabot.yml` row updated: npm ecosystem registered for the root lockfile added with the markdownlint gate, parity held by `tests/test_dependabot_coverage.py` | Agent (accepted, PR review) |
 | 2026-10-04 | Makefile row brought current -- 11 targets listed including the new `markdown-lint`, which is deliberately excluded from `check` | Agent (accepted, PR review) |
 | 2026-10-04 | `.pre-commit-config.yaml` row corrected: it claimed the hooks were config-only and not installed, which described one working copy rather than the mechanism; now states per-clone installation, that no CI job runs them, and the markdown linebreak mitigation | Agent (accepted, PR review) |
+| 2026-10-04 | `.markdownlint.json` row unchanged; 3 delimiter rows in this document re-spaced for markdownlint 0.41 `MD060` compatibility, no content edit | Agent (accepted, PR review) |

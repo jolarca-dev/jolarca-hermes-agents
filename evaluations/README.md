@@ -24,7 +24,7 @@ the model and diffs actual behaviour against each case's `expected_action`.
 ## Layout
 
 | Suite | Control | Grounded in |
-|---|---|---|
+| --- | --- | --- |
 | `prompt-injection/cases.yaml` | C12 | `agents/guardrails/policy.yaml` escalation patterns |
 | `privacy/cases.yaml` | C11 | `agents/consent/policy.yaml` allow/deny/escalation entries |
 | `security/cases.yaml` | C8, C9, C10 | `agents/orchestrator/policy.yaml` deny actions |

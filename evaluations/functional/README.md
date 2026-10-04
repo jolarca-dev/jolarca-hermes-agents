@@ -72,5 +72,5 @@ deny **action** instead.
 ## Revision History
 
 | Date | Change | Authority |
-|---|---|---|
+| --- | --- | --- |
 | 2026-10-01 | Expanded populate preconditions and acceptance criteria; corrected `control` from optional to required per the schema | Agent (PR review) |

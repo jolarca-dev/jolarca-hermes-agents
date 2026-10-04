@@ -21,7 +21,7 @@ A control without an enforcement mechanism is folklore (ADR-0004 R3: "Enforced, 
 ## Controls
 
 | # | Control | Enforcement mechanism | Evidence location | Failing CI job |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | C1 | Approved-source retrieval only | `rag` agent policy denies unapproved sources; `scripts/check_approved_sources.py` validates source allow-list | `agents/rag/policy.yaml`, audit log | `agent-policy-guard` |
 | C2 | Tenant and locale isolation | `rag` agent enforces tenant-scoped index access; `scripts/check_tenant_isolation.py` validates no cross-tenant queries | `agents/rag/policy.yaml`, audit log | `agent-policy-guard` |
 | C3 | Editorial approval before publication | `editorial` agent requires human approver; `scripts/check_editorial_approval.py` validates approval record exists | `agents/editorial/policy.yaml`, approval log | `provenance-check` |
@@ -59,7 +59,7 @@ Controls are enforced at four layers:
 ## CI Job Mapping
 
 | CI job | Controls enforced | Agent scope |
-|---|---|---|
+| --- | --- | --- |
 | `agent-policy-guard` | C1, C2, C5, C7, C12 | All agents |
 | `provenance-check` | C3, C4 | content, editorial |
 | `accessibility-gate` | C6 | accessibility |
@@ -77,7 +77,7 @@ Controls are enforced at four layers:
 ## Compliance Mapping
 
 | Control | SOC 2 | ISO 27001 | GDPR |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | C1 (approved sources) | CC6.1, CC7.2 | A.5.1, A.8.1 | Art. 5(1)(b) |
 | C2 (tenant isolation) | CC6.1, CC6.3 | A.8.13, A.5.15 | Art. 32 |
 | C3 (editorial approval) | CC8.1 | A.8.32 | — |
@@ -127,7 +127,7 @@ This control matrix is approved when:
 ## Revision History
 
 | Date | Change | Authority |
-|---|---|---|
+| --- | --- | --- |
 | 2026-09-30 | Initial draft | Agent (pending review) |
 | 2026-09-30 | All open questions resolved; success criteria met; status promoted to Accepted | Agent (accepted by solo operator) |
 | 2026-10-01 | Added `adversarial-evals` job + `evaluations/` evidence for C11/C12; corrected C9/C10 to cite the existing `check_deny_patterns.py` (non-existent scripts removed) | Agent (proposed, PR review) |
