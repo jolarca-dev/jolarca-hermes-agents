@@ -154,10 +154,20 @@ make test           # pytest tests/ agents/ -v
 make validate       # validate_agents.py + JSON Schema well-formedness
 make evals          # check_eval_coverage.py (C8-C12 fixtures)
 make deny-patterns  # scripts/check_deny_patterns.py
+make markdown-lint  # tracked markdown, via the CI-pinned tool; needs `npm ci` first
 ```
 
 `make check` does **not** run the tests. Run `make check` and `make test` both
 before claiming a change is green.
+
+`make check` also does **not** run `make markdown-lint`, deliberately: the pre-merge
+Python loop must not acquire an npm dependency. Measured -- `make check` exits 0 with
+`node_modules` removed, while `make markdown-lint` fails loudly in that state rather
+than silently passing. The docs gate is bound in CI by the supplementary
+`markdown-lint` job regardless, so a contributor who skips the local target still gets
+an honest verdict before merge. `tests/test_markdown_lint_gate.py` pins both facts: the
+local recipe must mirror the CI job's tool, config and tracked-file scope, and
+`check` must stay free of the Node prerequisite.
 
 ### 7.3 The deny-pattern scanner — the headline trap
 
@@ -230,21 +240,28 @@ Therefore:
   `content` denies `use_unapproved_sources`; `guardrails` escalates with action
   `block`. Hardcoding matrix prose previously produced false violations in
   seven scripts.
-- Convention, **not machine-enforced**: an agent's `tool_grants` in `agent.yaml`
-  and `allow.actions` in `policy.yaml` enumerate the same set. Keep them in
-  step — nothing in CI will tell you if you do not.
+- **Machine-enforced since PR #29**, by `tests/test_tool_grant_policy_parity.py` in the
+  required `test` job: every entry in an agent's `tool_grants` must appear in that
+  agent's own `allow.actions`. The invariant is a **one-way subset, not set equality** —
+  measured across the fleet, only `orchestrator` has the two sets equal, so asserting
+  equality would demand a fiction of the other eleven. Gotcha: `allow.actions` is
+  top-level in `policy.yaml`, not under `rules:`.
 
 ### 7.6 Where validation actually happens
 
-`scripts/validate_agents.py` is documented as validating "against JSON Schemas".
-It does not. It performs hand-rolled required-field, tag-pattern, and uniqueness
-checks, and its `load_schema()` helper is defined but never called. Real Draft
-2020-12 validation — positive and negative — lives in `tests/test_schemas.py`
-and `tests/test_eval_cases.py`, which run in the **`test`** job, not `lint`.
+`scripts/validate_agents.py` is a hand-rolled structural and identity-tag validator. It
+checks that `agent.yaml` and `policy.yaml` exist, parse as mappings, carry the required
+keys, and that `identity_tag` matches its pattern and is unique across the fleet. It
+does **not** validate against JSON Schema, and its module docstring says so plainly and
+points at `tests/test_schemas.py`. Real Draft 2020-12 validation — positive and
+negative — lives in `tests/test_schemas.py` and `tests/test_eval_cases.py`, which run in
+the **`test`** job, not `lint`.
 
 Consequence: a document can pass `make check` and still violate a schema. Run
-`make test` before claiming conformance. Do not fix the misleading docstring or
-the dead helper as a drive-by; raise it (§7.12).
+`make test` before claiming conformance. (This section formerly described a misleading
+docstring and a dead `load_schema()` helper. Both were corrected in PR #24 -- the helper
+is gone and the docstring is accurate -- so the old warning against fixing them as a
+drive-by is obsolete.)
 
 ### 7.7 Tests
 
@@ -448,3 +465,4 @@ or silently ignored.
 | 2026-10-03 | §7.10 wording corrected after measuring live branch protection: `secrets-scan` **runs** on every PR and push but is **not** a required context, so it cannot block a merge — the earlier "is enforced by" overstated it. Recorded that promotion is not possible from this repo (the control-plane Terraform root holds no state; `AGENTS.md` §5 forbids an agent apply and out-of-band PATCH of branch protection). `README.md` was already accurate. | Agent (proposed, PR review) |
 | 2026-10-04 | §7.8 changelog convention changed to one **undated** heading per category, because the dated form was the root cause of the 15 MD024 findings; markdownlint is now enforced by the supplementary CI `markdown-lint` job, so §7.8 no longer calls it a convention | Agent (proposed, PR review) |
 | 2026-10-04 | §7.7 names the fourth CI-integrity suite and `tests/test_dependabot_coverage.py`; §7.12 gains the unmonitored-manifest drift row; §7.6 citations in the previous row were wrong -- the changelog and markdownlint conventions live in §7.8, §7.6 is validation loci | Agent (proposed, PR review) |
+| 2026-10-04 | §7.2 documents `make markdown-lint` and records that `make check` stays Node-free by decision, both now pinned by `tests/test_markdown_lint_gate.py`; §7.5 corrected (grant/policy parity has been machine-enforced since PR #29, as a one-way subset) and §7.6 corrected (the dead `load_schema()` helper and overclaiming docstring were removed in PR #24) | Agent (proposed, PR review) |

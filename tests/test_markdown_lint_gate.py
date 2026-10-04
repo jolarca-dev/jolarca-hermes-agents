@@ -103,6 +103,57 @@ def test_no_run_step_in_this_job_swallows_its_exit_status():
     assert not offenders, f"exit-status swallow inside the markdown-lint job: {offenders}"
 
 
+MAKEFILE = ROOT / "Makefile"
+
+
+def _make_recipe(target: str) -> list[str]:
+    """Tab-indented commands under a Makefile target, same parser style as test_lint_gate_scope."""
+    recipe: list[str] = []
+    inside = False
+    for line in MAKEFILE.read_text(encoding="utf-8").splitlines():
+        if re.match(rf"^{target}\s*:", line):
+            inside = True
+            continue
+        if not inside:
+            continue
+        if line.startswith("\t"):
+            recipe.append(line.strip())
+        elif line.strip():
+            break
+    return recipe
+
+
+def _joined(lines: list[str]) -> str:
+    """Flatten Makefile recipe lines. Distinct from _blob(), which expects a CI job dict."""
+    return " ".join(lines).lower()
+
+
+def _make_target_line(target: str) -> str:
+    for line in MAKEFILE.read_text(encoding="utf-8").splitlines():
+        if re.match(rf"^{target}\s*:", line):
+            return line
+    return ""
+
+
+def test_makefile_mirrors_the_ci_markdown_lint_job():
+    """A documented local command that differs from the gate is worse than having none.
+
+    This is the same drift class `tests/test_lint_gate_scope.py` pins for Python formatting:
+    the Makefile claimed CI ran make, while the job called the tools directly.
+    """
+    recipe = _joined(_make_recipe("markdown-lint"))
+    assert recipe, "no `make markdown-lint` target, yet QODER.md 7.2 documents one"
+    for token in ("markdownlint-cli2", "--config .markdownlint.json", "git ls-files"):
+        assert token in recipe, f"`make markdown-lint` no longer mirrors the CI job ({token}): {recipe}"
+
+
+def test_markdown_lint_is_deliberately_not_in_make_check():
+    """`make check` stays Node-free by decision. Pin it so it cannot drift into a dependency."""
+    line = _make_target_line("check")
+    assert "markdown-lint" not in line, f"`make check` gained a Node prerequisite: {line}"
+    assert "markdown-lint" not in _joined(_make_recipe("check")), "`make check` invokes markdown-lint"
+
+
 def test_md024_stays_enabled_at_default():
     """The duplicate headings were ours, so the changelog was consolidated rather than the rule."""
     cfg = json.loads((ROOT / ".markdownlint.json").read_text(encoding="utf-8"))

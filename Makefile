@@ -1,14 +1,19 @@
 # ──────────────────────────────────────────────────────────────────────────────
 # jolarca-hermes-agents — Makefile
 # ──────────────────────────────────────────────────────────────────────────────
-# Targets: lint / typecheck / test / validate / check
+# Targets: lint / typecheck / test / validate / agents / schemas / deny-patterns /
+#          evals / markdown-lint / check
 # The CI `lint` job runs these same checks as explicit steps (ruff check, ruff
 # format --check, validate_agents.py, check_deny_patterns.py). It does NOT invoke
 # make, so a check added only here would not bind in CI. See
 # tests/test_lint_gate_scope.py, which pins both halves.
+#
+# `markdown-lint` mirrors the CI `markdown-lint` job but is deliberately NOT part of
+# `check`, which stays Node-free: the Python loop must not acquire an npm dependency.
+# The mirror is pinned by tests/test_markdown_lint_gate.py.
 # ──────────────────────────────────────────────────────────────────────────────
 
-.PHONY: lint typecheck test validate check agents schemas deny-patterns evals help
+.PHONY: lint typecheck test validate check agents schemas deny-patterns evals markdown-lint help
 
 VENV := .venv/bin
 PYTHON := $(VENV)/python
@@ -45,5 +50,13 @@ deny-patterns:  ## Scan for forbidden mission-platform references
 
 evals:  ## Validate evaluation suite grounding + coverage (C11/C12)
 	$(PYTHON) scripts/check_eval_coverage.py
+
+markdown-lint:  ## Lint tracked markdown with the CI-pinned tool (needs npm ci; excluded from check)
+	@test -x node_modules/.bin/markdownlint-cli2 || { \
+		echo "markdown-lint: tool not installed. Run: npm ci --no-audit --no-fund --ignore-scripts"; \
+		exit 1; \
+	}
+	git ls-files -z '*.md' | xargs -0 --no-run-if-empty \
+		node_modules/.bin/markdownlint-cli2 --config .markdownlint.json
 
 check: lint validate deny-patterns  ## Full pre-merge check (mirrored by the CI lint job)
