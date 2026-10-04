@@ -231,7 +231,7 @@ statuses below were reconciled against `git ls-files` on 2026-10-03.
 | `.pre-commit-config.yaml` | Present | Config only — the hooks are not installed in this clone |
 | `CHANGELOG.md` | Present | Keep a Changelog format |
 | `CONTRIBUTING.md` | Present | States the three repo invariants |
-| `Makefile` | Present | Targets: lint, test, validate, check, evals, deny-patterns |
+| `Makefile` | Present | Targets: help, lint, typecheck, test, validate, agents, schemas, deny-patterns, evals, markdown-lint, check |
 | `pyproject.toml` | Present | Ruff, pytest and mypy config; no runtime dependencies |
 | `qodana.yaml` | Present | Code quality config |
 | `.github/dependabot.yml` | Present | github-actions, pip and npm ecosystems, weekly; manifest/ecosystem parity held by `tests/test_dependabot_coverage.py` |
@@ -283,3 +283,4 @@ Files are created in dependency order:
 | 2026-10-03 | Reconciled the Fleet-Standard Files table: all ten rows said `Missing` while all ten files were tracked and present, contradicting this document's own 2026-09-30 row ("all files present"). Statuses now read `Present`, and the two config-only files say so plainly rather than implying enforcement | Agent (proposed, PR review) |
 | 2026-10-04 | Added `package.json` and `package-lock.json` to the root file list; `.markdownlint.json` status changed from config-only to enforced by the CI `markdown-lint` job | Agent (accepted, PR review) |
 | 2026-10-04 | `.github/dependabot.yml` row updated: npm ecosystem registered for the root lockfile added with the markdownlint gate, parity held by `tests/test_dependabot_coverage.py` | Agent (accepted, PR review) |
+| 2026-10-04 | Makefile row brought current -- 11 targets listed including the new `markdown-lint`, which is deliberately excluded from `check` | Agent (accepted, PR review) |

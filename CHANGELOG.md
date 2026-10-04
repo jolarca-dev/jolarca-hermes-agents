@@ -7,6 +7,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `Makefile`: a `markdown-lint` target, and `QODER.md` §7.2 now documents it. Until this change the
+  docs gate existed in CI but **nowhere in the contract's command list** -- "markdown" appeared nowhere
+  in §7.2 -- so a contributor obeying the file had no way to run the gate locally and met it cold in a
+  PR. The recipe mirrors the CI job exactly (`git ls-files` scope, `--config .markdownlint.json`, the
+  lockfile-installed binary) and fails loudly when the tool is absent instead of skipping.
+
+  **Deliberately excluded from `make check`.** The pre-merge Python loop must not acquire an npm
+  dependency. Both decisions are now pinned by `tests/test_markdown_lint_gate.py` (two new tests) so
+  neither can drift: someone adding `markdown-lint` to `check`, or quietly diverging the local recipe
+  from the CI job, gets a failing build. Measured rather than asserted -- with `node_modules` moved
+  out of the tree, `make check` exits **0** while `make markdown-lint` exits **2** with an install
+  hint; with the tool present the target lints 49 files at 0 errors.
+
 - `.github/dependabot.yml`: an `npm` ecosystem for the root directory, so the
   `package.json`/`package-lock.json` pair introduced by the markdownlint gate is actually monitored.
   **This closed a gap I created myself**: PR #37 pinned markdownlint-cli2 and ~80 transitive packages
@@ -371,6 +384,25 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `drift_detected` escalation pattern name declared by both audit and observability
 
 ### Fixed
+
+- `QODER.md` §7.5 and §7.6 both described the compliance spine as it stood **before** work already on
+  `main`, which is the direction of staleness that makes a contract actively misleading:
+  - §7.5 asserted that `tool_grants` vs `allow.actions` parity was "Convention, **not
+    machine-enforced**" and "nothing in CI will tell you if you do not." False since PR #29: the
+    required `test` job runs `tests/test_tool_grant_policy_parity.py`. Rewritten to state the real
+    invariant -- a **one-way subset**, because measured, only `orchestrator` has the two sets equal and
+    asserting equality would demand a fiction of the other eleven -- and to keep the `allow.actions`
+    top-level nesting gotcha that previously cost me a vacuous pass.
+  - §7.6 described `validate_agents.py` as carrying a misleading "against JSON Schemas" docstring with
+    a dead `load_schema()` helper, and warned not to fix them as a drive-by. PR #24 already corrected
+    the docstring and deleted the helper; `load_schema` no longer exists in the file. The section now
+    states what the script actually checks and marks the old warning obsolete.
+
+  Found while doing the §7.2 work above. Disclosed here and described as its own logical change rather
+  than repaired silently, per §7.12; it ships in the same commit as the §7.2 work, not as a hidden
+  hunk. Also corrected `docs/target-tree.md`'s Makefile row, which listed 6 of 11
+  targets -- a row my own change would otherwise have made staler. (§7.7's suite count was already
+  brought current in the dependabot PR #38, so no change was needed there.)
 
 - `QODER.md` Revision History: the row added for PR #32 was missing its third cell. The table
   is `| Date | Change | Authority |`, but that row ended immediately after the change text, so
