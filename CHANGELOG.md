@@ -7,6 +7,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `package.json` declares `engines.node: ">=22"`, and `tests/test_markdown_lint_gate.py` now asserts that
+  declaration **matches the CI `node-version`** instead of hardcoding a number, so the runtime a contributor
+  installs and the runtime the gate runs in cannot drift apart unnoticed. The requirement existed only as a
+  workflow comment and as an `EBADENGINE` warning on any machine below 22 -- including this one, measured at
+  Node **20.20.2**, while CI installed **22**. Guard written first and seen red: `1 failed, 10 passed` with
+  the failure being the absent `engines` field. Mutation-proved after: setting `engines.node` to `>=20`
+  fails against CI's 22, and deleting the field fails again; each restore byte-identical.
+  `CONTRIBUTING.md` gained a "Markdown linting" section (Node 22, the `npm ci` line, and why `make check`
+  still stays npm-free); `QODER.md` §7.2 now names the Node major in the command list. Verified the lockfile
+  stays in sync: npm records only `name`/`version`/`devDependencies` in the lock root, and `npm ci --dry-run`
+  after the edit still exits 0 rather than reporting `package.json` and `package-lock.json` out of sync.
+
 - `tests/test_precommit_hook_safety.py`, plus the mitigation it pins: `.pre-commit-config.yaml`'s
   `trailing-whitespace` hook now carries `args: [--markdown-linebreak-ext=md]`. The config had declared
   the hook with no arguments while three `Status: Accepted` governance docs open their metadata headers
